@@ -89,15 +89,15 @@ private struct ReflexRootView: View {
             PhasePlaceholderView(
                 title: "Inspector",
                 systemImage: "slider.horizontal.3",
-                phase: "Phase 2",
-                description: "Context inspection arrives with opt-in observation controls."
+                phase: "Phase 4",
+                description: "Local decision history arrives in Phase 4."
             )
         case .replayLab:
             PhasePlaceholderView(
                 title: "Replay Lab",
                 systemImage: "play.rectangle",
-                phase: "Later phase",
-                description: "Replay is not collected or persisted in Phase 1."
+                phase: "Phase 5",
+                description: "Replay Lab arrives in Phase 5."
             )
         case .settings:
             SettingsView(model: model)

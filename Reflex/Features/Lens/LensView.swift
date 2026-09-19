@@ -8,6 +8,7 @@ struct LensView: View {
             VStack(alignment: .leading, spacing: 24) {
                 header
                 privacyNotice
+                decisionStatus
                 contextCard
                 decisionGrid
                 controls
@@ -49,6 +50,37 @@ struct LensView: View {
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(.thinMaterial, in: .rect(cornerRadius: 14))
+    }
+
+    private var decisionStatus: some View {
+        HStack(spacing: 12) {
+            Label(providerModeTitle, systemImage: providerModeSystemImage)
+                .font(.headline)
+            Spacer()
+            VStack(alignment: .trailing, spacing: 2) {
+                Label("Fresh decision", systemImage: "checkmark.circle.fill")
+                    .font(.subheadline.weight(.medium))
+                Text(model.decisionUpdatedAt, style: .relative)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.thinMaterial, in: .rect(cornerRadius: 14))
+    }
+
+    private var providerModeTitle: String {
+        switch model.providerMode {
+        case .mock:
+            "Mock sample selected"
+        case .live:
+            "Live Jev selected — unavailable until Phase 3"
+        }
+    }
+
+    private var providerModeSystemImage: String {
+        model.providerMode == .mock ? "circle.fill" : "lock.fill"
     }
 
     private var contextCard: some View {

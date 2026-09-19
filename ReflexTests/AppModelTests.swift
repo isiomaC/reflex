@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import Reflex
 
@@ -21,6 +22,20 @@ struct AppModelTests {
         model.captureNextSample()
 
         #expect(model.context != initialContext)
+    }
+
+    @MainActor
+    @Test func captureNextSampleRefreshesDecisionTimestamp() {
+        let firstUpdate = Date(timeIntervalSinceReferenceDate: 100)
+        let refreshedUpdate = Date(timeIntervalSinceReferenceDate: 200)
+        var updates = [firstUpdate, refreshedUpdate]
+        let model = AppModel(now: { updates.removeFirst() })
+
+        #expect(model.decisionUpdatedAt == firstUpdate)
+
+        model.captureNextSample()
+
+        #expect(model.decisionUpdatedAt == refreshedUpdate)
     }
 
     @MainActor

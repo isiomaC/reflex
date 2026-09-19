@@ -1,3 +1,4 @@
+import Foundation
 import Observation
 
 enum AppDestination: Hashable, Sendable {
@@ -27,11 +28,13 @@ final class AppModel {
     var isPaused = false
     private(set) var context: SampleContext
     private(set) var decision: MockDecision
+    private(set) var decisionUpdatedAt: Date
 
     private let decisionProvider: any DecisionProvider
     // Reserved for Phase 3. It is deliberately never invoked in this release.
     private let liveDecisionProvider: (any DecisionProvider)?
     private let samples: [SampleContext]
+    private let now: () -> Date
     private var sampleIndex: Int
 
     var liveModeMessage: String? {
@@ -41,16 +44,19 @@ final class AppModel {
     init(
         sampleContextProvider: any SampleContextProvider = StaticSampleContextProvider(),
         decisionProvider: any DecisionProvider = MockDecisionProvider(),
-        liveDecisionProvider: (any DecisionProvider)? = nil
+        liveDecisionProvider: (any DecisionProvider)? = nil,
+        now: @escaping () -> Date = Date.init
     ) {
         let initialContext = sampleContextProvider.currentContext()
         let availableSamples = SampleContext.allCases
 
         self.decisionProvider = decisionProvider
         self.liveDecisionProvider = liveDecisionProvider
+        self.now = now
         samples = availableSamples
         context = initialContext
         decision = decisionProvider.decision(for: initialContext)
+        decisionUpdatedAt = now()
         sampleIndex = availableSamples.firstIndex(of: initialContext) ?? 0
     }
 
@@ -60,5 +66,6 @@ final class AppModel {
         sampleIndex = (sampleIndex + 1) % samples.count
         context = samples[sampleIndex]
         decision = decisionProvider.decision(for: context)
+        decisionUpdatedAt = now()
     }
 }
