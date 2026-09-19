@@ -8,7 +8,9 @@ struct LensView: View {
             VStack(alignment: .leading, spacing: 24) {
                 header
                 privacyNotice
-                decisionStatus
+                TimelineView(.periodic(from: .now, by: 1)) { timeline in
+                    decisionStatus(at: timeline.date)
+                }
                 contextCard
                 decisionGrid
                 controls
@@ -52,14 +54,17 @@ struct LensView: View {
             .background(.thinMaterial, in: .rect(cornerRadius: 14))
     }
 
-    private var decisionStatus: some View {
-        HStack(spacing: 12) {
+    private func decisionStatus(at date: Date) -> some View {
+        let isFresh = model.decisionFreshness(at: date) == .fresh
+
+        return HStack(spacing: 12) {
             Label(providerModeTitle, systemImage: providerModeSystemImage)
                 .font(.headline)
             Spacer()
             VStack(alignment: .trailing, spacing: 2) {
-                Label("Fresh decision", systemImage: "checkmark.circle.fill")
+                Label(isFresh ? "Fresh decision" : "Stale decision", systemImage: isFresh ? "checkmark.circle.fill" : "clock.badge.exclamationmark")
                     .font(.subheadline.weight(.medium))
+                    .foregroundStyle(isFresh ? Color.primary : Color.orange)
                 Text(model.decisionUpdatedAt, style: .relative)
                     .font(.caption)
                     .foregroundStyle(.secondary)

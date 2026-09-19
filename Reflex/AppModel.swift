@@ -5,7 +5,6 @@ enum AppDestination: Hashable, Sendable {
     case lens
     case inspector
     case replayLab
-    case settings
 }
 
 enum ProviderMode: String, CaseIterable, Equatable, Sendable {
@@ -18,6 +17,11 @@ enum ProviderMode: String, CaseIterable, Equatable, Sendable {
         case .live: "Live Jev (Phase 3)"
         }
     }
+}
+
+enum DecisionFreshness: Equatable, Sendable {
+    case fresh
+    case stale
 }
 
 @MainActor
@@ -67,5 +71,9 @@ final class AppModel {
         context = samples[sampleIndex]
         decision = decisionProvider.decision(for: context)
         decisionUpdatedAt = now()
+    }
+
+    func decisionFreshness(at date: Date) -> DecisionFreshness {
+        date.timeIntervalSince(decisionUpdatedAt) <= 60 ? .fresh : .stale
     }
 }

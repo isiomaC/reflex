@@ -13,7 +13,7 @@ struct MockDecisionProvider: DecisionProvider {
             )
         case .writing:
             MockDecision(
-                activity: ActivityDecision(selected: .debugging, confidence: 0.61),
+                activity: ActivityDecision(selected: .writing, confidence: 0.89),
                 interventionUsefulness: 0.18,
                 suggestion: "Finish the current paragraph before switching tasks."
             )

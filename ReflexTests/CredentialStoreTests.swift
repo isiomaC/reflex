@@ -1,4 +1,5 @@
 import Testing
+import Security
 @testable import Reflex
 
 struct CredentialStoreTests {
@@ -10,5 +11,9 @@ struct CredentialStoreTests {
 
         try store.remove()
         #expect(try store.load() == nil)
+    }
+
+    @Test func keychainStoreUsesDeviceOnlyWhenUnlockedAccessibility() {
+        #expect(KeychainCredentialStore.accessibility == kSecAttrAccessibleWhenUnlockedThisDeviceOnly)
     }
 }

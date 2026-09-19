@@ -39,6 +39,15 @@ struct AppModelTests {
     }
 
     @MainActor
+    @Test func decisionIsFreshForOneMinuteAfterItsUpdate() {
+        let updatedAt = Date(timeIntervalSinceReferenceDate: 100)
+        let model = AppModel(now: { updatedAt })
+
+        #expect(model.decisionFreshness(at: updatedAt.addingTimeInterval(60)) == .fresh)
+        #expect(model.decisionFreshness(at: updatedAt.addingTimeInterval(60.1)) == .stale)
+    }
+
+    @MainActor
     @Test func liveModeShowsPhaseThreeDisclosureWithoutMakingALiveRequest() {
         let liveProvider = CountingDecisionProvider()
         let model = AppModel(liveDecisionProvider: liveProvider)
@@ -54,6 +63,13 @@ struct AppModelTests {
 
         #expect(result.activity.selected == .debugging)
         #expect(result.activity.confidence == 0.92)
+    }
+
+    @Test func writingSamplePrefersWriting() {
+        let result = MockDecisionProvider().decision(for: .writing)
+
+        #expect(result.activity.selected == .writing)
+        #expect(result.activity.confidence == 0.89)
     }
 
     @Test func mockDecisionProviderCanBeUsedThroughDecisionProviderBoundary() {

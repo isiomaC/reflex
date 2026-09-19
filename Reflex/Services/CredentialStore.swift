@@ -13,6 +13,8 @@ enum CredentialStoreError: Error, Equatable {
 }
 
 final class KeychainCredentialStore: CredentialStore {
+    nonisolated(unsafe) static let accessibility = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+
     private let service: String
     private let account: String
 
@@ -36,6 +38,7 @@ final class KeychainCredentialStore: CredentialStore {
 
         var attributes = query
         attributes[kSecValueData as String] = data
+        attributes[kSecAttrAccessible as String] = Self.accessibility
         let addStatus = SecItemAdd(attributes as CFDictionary, nil)
         guard addStatus == errSecSuccess else {
             throw CredentialStoreError.unexpectedStatus(addStatus)

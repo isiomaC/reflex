@@ -1,5 +1,6 @@
 enum Activity: String, Sendable {
     case debugging
+    case writing
 }
 
 struct ActivityDecision: Sendable {

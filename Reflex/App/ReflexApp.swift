@@ -4,23 +4,29 @@ import SwiftUI
 @main
 struct ReflexApp: App {
     @State private var model = AppModel()
+    @Environment(\.openWindow) private var openWindow
 
     var body: some Scene {
-        WindowGroup {
+        WindowGroup("Reflex", id: "reflex-main") {
             ReflexRootView(model: model)
         }
         .commands {
             CommandGroup(replacing: .appSettings) {
-                Button("Settings…") {
-                    model.destination = .settings
-                    NSApp.activate(ignoringOtherApps: true)
+                SettingsLink {
+                    Text("Settings…")
                 }
                 .keyboardShortcut(",")
             }
         }
 
+        Settings {
+            SettingsView(model: model)
+                .frame(width: 520)
+        }
+
         MenuBarExtra("Reflex", systemImage: model.isPaused ? "pause.circle" : "sparkle") {
             Button("Open Reflex") {
+                openWindow(id: "reflex-main")
                 NSApp.activate(ignoringOtherApps: true)
             }
 
@@ -39,9 +45,8 @@ struct ReflexApp: App {
 
             Divider()
 
-            Button("Settings…") {
-                model.destination = .settings
-                NSApp.activate(ignoringOtherApps: true)
+            SettingsLink {
+                Text("Settings…")
             }
 
             Divider()
@@ -69,8 +74,9 @@ private struct ReflexRootView: View {
                 }
 
                 Section {
-                    Label("Settings", systemImage: "gearshape")
-                        .tag(AppDestination.settings)
+                    SettingsLink {
+                        Label("Settings", systemImage: "gearshape")
+                    }
                 }
             }
             .navigationSplitViewColumnWidth(min: 190, ideal: 220)
@@ -99,8 +105,6 @@ private struct ReflexRootView: View {
                 phase: "Phase 5",
                 description: "Replay Lab arrives in Phase 5."
             )
-        case .settings:
-            SettingsView(model: model)
         }
     }
 }
