@@ -17,16 +17,26 @@ final class KeychainCredentialStore: CredentialStore {
 
     private let service: String
     private let account: String
+    private let updateItem: (CFDictionary, CFDictionary) -> OSStatus
 
-    init(service: String = "com.isiomac.Reflex", account: String = "jev-api-key") {
+    init(
+        service: String = "com.isiomac.Reflex",
+        account: String = "jev-api-key",
+        updateItem: @escaping (CFDictionary, CFDictionary) -> OSStatus = SecItemUpdate
+    ) {
         self.service = service
         self.account = account
+        self.updateItem = updateItem
     }
 
     func save(_ apiKey: String) throws {
         let data = Data(apiKey.utf8)
         let query = baseQuery()
-        let updateStatus = SecItemUpdate(query as CFDictionary, [kSecValueData: data] as CFDictionary)
+        let updateAttributes: [String: Any] = [
+            kSecValueData as String: data,
+            kSecAttrAccessible as String: Self.accessibility
+        ]
+        let updateStatus = updateItem(query as CFDictionary, updateAttributes as CFDictionary)
 
         if updateStatus == errSecSuccess {
             return

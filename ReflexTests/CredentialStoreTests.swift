@@ -16,4 +16,21 @@ struct CredentialStoreTests {
     @Test func keychainStoreUsesDeviceOnlyWhenUnlockedAccessibility() {
         #expect(KeychainCredentialStore.accessibility == kSecAttrAccessibleWhenUnlockedThisDeviceOnly)
     }
+
+    @Test func keychainStoreMigratesExistingCredentialAccessibilityDuringSave() throws {
+        var receivedUpdateAttributes: [String: Any]?
+        let store = KeychainCredentialStore(
+            updateItem: { _, attributes in
+                receivedUpdateAttributes = attributes as? [String: Any]
+                return errSecSuccess
+            }
+        )
+
+        try store.save("jev_test_key")
+
+        #expect(
+            receivedUpdateAttributes?[kSecAttrAccessible as String] as? String
+                == kSecAttrAccessibleWhenUnlockedThisDeviceOnly as String
+        )
+    }
 }
