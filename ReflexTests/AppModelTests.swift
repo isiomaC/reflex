@@ -4,6 +4,20 @@ import Testing
 
 struct AppModelTests {
     @MainActor
+    @Test func providerModeRestoresFromTheSameDefaultsStore() {
+        let suiteName = "ReflexTests.providerMode.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let firstLaunch = AppModel(defaults: defaults)
+        firstLaunch.providerMode = .live
+
+        let relaunchedModel = AppModel(defaults: defaults)
+
+        #expect(relaunchedModel.providerMode == .live)
+    }
+
+    @MainActor
     @Test func captureNextSampleDoesNothingWhilePaused() {
         let model = AppModel()
         let initialContext = model.context
@@ -50,7 +64,10 @@ struct AppModelTests {
     @MainActor
     @Test func liveModeShowsPhaseThreeDisclosureWithoutMakingALiveRequest() {
         let liveProvider = CountingDecisionProvider()
-        let model = AppModel(liveDecisionProvider: liveProvider)
+        let suiteName = "ReflexTests.liveMode.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let model = AppModel(liveDecisionProvider: liveProvider, defaults: defaults)
 
         model.providerMode = .live
 

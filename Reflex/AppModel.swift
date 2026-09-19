@@ -27,8 +27,14 @@ enum DecisionFreshness: Equatable, Sendable {
 @MainActor
 @Observable
 final class AppModel {
+    private static let providerModeDefaultsKey = "providerMode"
+
     var destination: AppDestination = .lens
-    var providerMode: ProviderMode = .mock
+    var providerMode: ProviderMode {
+        didSet {
+            defaults.set(providerMode.rawValue, forKey: Self.providerModeDefaultsKey)
+        }
+    }
     var isPaused = false
     private(set) var context: SampleContext
     private(set) var decision: MockDecision
@@ -39,6 +45,7 @@ final class AppModel {
     private let liveDecisionProvider: (any DecisionProvider)?
     private let samples: [SampleContext]
     private let now: () -> Date
+    private let defaults: UserDefaults
     private var sampleIndex: Int
 
     var liveModeMessage: String? {
@@ -49,7 +56,8 @@ final class AppModel {
         sampleContextProvider: any SampleContextProvider = StaticSampleContextProvider(),
         decisionProvider: any DecisionProvider = MockDecisionProvider(),
         liveDecisionProvider: (any DecisionProvider)? = nil,
-        now: @escaping () -> Date = Date.init
+        now: @escaping () -> Date = Date.init,
+        defaults: UserDefaults = .standard
     ) {
         let initialContext = sampleContextProvider.currentContext()
         let availableSamples = SampleContext.allCases
@@ -57,7 +65,9 @@ final class AppModel {
         self.decisionProvider = decisionProvider
         self.liveDecisionProvider = liveDecisionProvider
         self.now = now
+        self.defaults = defaults
         samples = availableSamples
+        providerMode = ProviderMode(rawValue: defaults.string(forKey: Self.providerModeDefaultsKey) ?? "") ?? .mock
         context = initialContext
         decision = decisionProvider.decision(for: initialContext)
         decisionUpdatedAt = now()
