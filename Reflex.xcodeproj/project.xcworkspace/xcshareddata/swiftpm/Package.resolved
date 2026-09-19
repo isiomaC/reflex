@@ -1,0 +1,15 @@
+{
+  "originHash" : "9db2184562b666ae11db6e9ebaa21c3d0f29997d7110ff09aa5478ab1c0132e4",
+  "pins" : [
+    {
+      "identity" : "jevkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/isiomaC/jevkit.git",
+      "state" : {
+        "revision" : "70b7e04f9d1d19111e2f5952d62648f133e01ea2",
+        "version" : "0.1.0"
+      }
+    }
+  ],
+  "version" : 3
+}
