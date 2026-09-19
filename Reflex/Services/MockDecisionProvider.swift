@@ -1,4 +1,8 @@
-struct MockDecisionProvider: Sendable {
+protocol DecisionProvider: Sendable {
+    func decision(for context: SampleContext) -> MockDecision
+}
+
+struct MockDecisionProvider: DecisionProvider {
     func decision(for context: SampleContext) -> MockDecision {
         switch context {
         case .debugging:

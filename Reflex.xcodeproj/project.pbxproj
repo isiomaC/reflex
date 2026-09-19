@@ -14,6 +14,7 @@
 		A10000000000000000000016 /* MockDecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000B /* MockDecision.swift */; };
 		A10000000000000000000017 /* SampleContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000C /* SampleContextProvider.swift */; };
 		A10000000000000000000018 /* MockDecisionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000D /* MockDecisionProvider.swift */; };
+		A10000000000000000000019 /* JevKit in Frameworks */ = {isa = PBXBuildFile; productRef = A10000000000000000000092 /* JevKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,7 +32,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		A10000000000000000000021 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000021 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000019 /* JevKit in Frameworks */); runOnlyForDeploymentPostprocessing = 0; };
 		A10000000000000000000022 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXFrameworksBuildPhase section */
 
@@ -85,7 +86,7 @@
 			buildRules = ();
 			dependencies = ();
 			name = Reflex;
-			packageProductDependencies = ();
+			packageProductDependencies = (A10000000000000000000092 /* JevKit */);
 			productName = Reflex;
 			productReference = A10000000000000000000003 /* Reflex.app */;
 			productType = "com.apple.product-type.application";
@@ -159,6 +160,10 @@
 /* Begin XCRemoteSwiftPackageReference section */
 		A10000000000000000000091 /* XCRemoteSwiftPackageReference \"jevkit\" */ = {isa = XCRemoteSwiftPackageReference; repositoryURL = "https://github.com/isiomaC/jevkit.git"; requirement = { kind = upToNextMajorVersion; minimumVersion = 0.1.0; }; };
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A10000000000000000000092 /* JevKit */ = {isa = XCSwiftPackageProductDependency; package = A10000000000000000000091 /* XCRemoteSwiftPackageReference \"jevkit\" */; productName = JevKit; };
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A10000000000000000000051 /* Project object */;
 }

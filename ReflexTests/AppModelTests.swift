@@ -8,4 +8,16 @@ struct AppModelTests {
         #expect(result.activity.selected == .debugging)
         #expect(result.activity.confidence == 0.92)
     }
+
+    @Test func mockDecisionProviderCanBeUsedThroughDecisionProviderBoundary() {
+        let provider: any DecisionProvider = MockDecisionProvider()
+
+        #expect(provider.decision(for: .debugging).activity.selected == .debugging)
+    }
+
+    @Test func staticSampleContextProviderReturnsDebuggingContext() {
+        let provider: any SampleContextProvider = StaticSampleContextProvider()
+
+        #expect(provider.currentContext() == .debugging)
+    }
 }
