@@ -15,6 +15,8 @@
 		A10000000000000000000017 /* SampleContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000C /* SampleContextProvider.swift */; };
 		A10000000000000000000018 /* MockDecisionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000D /* MockDecisionProvider.swift */; };
 		A10000000000000000000019 /* JevKit in Frameworks */ = {isa = PBXBuildFile; productRef = A10000000000000000000092 /* JevKit */; };
+		A1000000000000000000001A /* CredentialStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000E /* CredentialStoreTests.swift */; };
+		A1000000000000000000001B /* CredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000F /* CredentialStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +31,8 @@
 		A1000000000000000000000B /* MockDecision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDecision.swift; sourceTree = "<group>"; };
 		A1000000000000000000000C /* SampleContextProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleContextProvider.swift; sourceTree = "<group>"; };
 		A1000000000000000000000D /* MockDecisionProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDecisionProvider.swift; sourceTree = "<group>"; };
+		A1000000000000000000000E /* CredentialStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialStoreTests.swift; sourceTree = "<group>"; };
+		A1000000000000000000000F /* CredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,13 +64,13 @@
 		};
 		A10000000000000000000036 /* Services */ = {
 			isa = PBXGroup;
-			children = (A1000000000000000000000C /* SampleContextProvider.swift */, A1000000000000000000000D /* MockDecisionProvider.swift */);
+			children = (A1000000000000000000000C /* SampleContextProvider.swift */, A1000000000000000000000D /* MockDecisionProvider.swift */, A1000000000000000000000F /* CredentialStore.swift */);
 			path = Services;
 			sourceTree = "<group>";
 		};
 		A10000000000000000000033 /* ReflexTests */ = {
 			isa = PBXGroup;
-			children = (A10000000000000000000002 /* ReflexTests.swift */, A10000000000000000000007 /* AppModelTests.swift */);
+			children = (A10000000000000000000002 /* ReflexTests.swift */, A10000000000000000000007 /* AppModelTests.swift */, A1000000000000000000000E /* CredentialStoreTests.swift */);
 			path = ReflexTests;
 			sourceTree = "<group>";
 		};
@@ -130,8 +134,8 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A10000000000000000000071 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000011 /* ReflexApp.swift in Sources */, A10000000000000000000013 /* AppModel.swift in Sources */, A10000000000000000000015 /* SampleContext.swift in Sources */, A10000000000000000000016 /* MockDecision.swift in Sources */, A10000000000000000000017 /* SampleContextProvider.swift in Sources */, A10000000000000000000018 /* MockDecisionProvider.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
-		A10000000000000000000073 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000012 /* ReflexTests.swift in Sources */, A10000000000000000000014 /* AppModelTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000071 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000011 /* ReflexApp.swift in Sources */, A10000000000000000000013 /* AppModel.swift in Sources */, A10000000000000000000015 /* SampleContext.swift in Sources */, A10000000000000000000016 /* MockDecision.swift in Sources */, A10000000000000000000017 /* SampleContextProvider.swift in Sources */, A10000000000000000000018 /* MockDecisionProvider.swift in Sources */, A1000000000000000000001B /* CredentialStore.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000073 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000012 /* ReflexTests.swift in Sources */, A10000000000000000000014 /* AppModelTests.swift in Sources */, A1000000000000000000001A /* CredentialStoreTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */

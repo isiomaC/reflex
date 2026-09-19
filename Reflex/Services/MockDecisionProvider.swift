@@ -11,6 +11,12 @@ struct MockDecisionProvider: DecisionProvider {
                 interventionUsefulness: 0.28,
                 suggestion: "Keep the compiler error visible and isolate the failing expression."
             )
+        case .writing:
+            MockDecision(
+                activity: ActivityDecision(selected: .debugging, confidence: 0.61),
+                interventionUsefulness: 0.18,
+                suggestion: "Finish the current paragraph before switching tasks."
+            )
         }
     }
 }
