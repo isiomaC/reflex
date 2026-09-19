@@ -1,0 +1,142 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000000000000000000011 /* ReflexApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000001 /* ReflexApp.swift */; };
+		A10000000000000000000012 /* ReflexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000002 /* ReflexTests.swift */; };
+		A10000000000000000000013 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000006 /* AppModel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A10000000000000000000001 /* ReflexApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflexApp.swift; sourceTree = "<group>"; };
+		A10000000000000000000002 /* ReflexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflexTests.swift; sourceTree = "<group>"; };
+		A10000000000000000000003 /* Reflex.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reflex.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000004 /* ReflexTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReflexTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000005 /* Reflex.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Reflex.entitlements; sourceTree = "<group>"; };
+		A10000000000000000000006 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A10000000000000000000021 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000022 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A10000000000000000000031 = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000032 /* Reflex */,
+				A10000000000000000000033 /* ReflexTests */,
+				A10000000000000000000034 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A10000000000000000000032 /* Reflex */ = {
+			isa = PBXGroup;
+			children = (A10000000000000000000001 /* ReflexApp.swift */, A10000000000000000000006 /* AppModel.swift */, A10000000000000000000005 /* Reflex.entitlements */);
+			path = Reflex;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000033 /* ReflexTests */ = {
+			isa = PBXGroup;
+			children = (A10000000000000000000002 /* ReflexTests.swift */);
+			path = ReflexTests;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000034 /* Products */ = {
+			isa = PBXGroup;
+			children = (A10000000000000000000003 /* Reflex.app */, A10000000000000000000004 /* ReflexTests.xctest */);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A10000000000000000000041 /* Reflex */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10000000000000000000061 /* Build configuration list for PBXNativeTarget \"Reflex\" */;
+			buildPhases = (A10000000000000000000071 /* Sources */, A10000000000000000000021 /* Frameworks */, A10000000000000000000072 /* Resources */);
+			buildRules = ();
+			dependencies = ();
+			name = Reflex;
+			packageProductDependencies = ();
+			productName = Reflex;
+			productReference = A10000000000000000000003 /* Reflex.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A10000000000000000000042 /* ReflexTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10000000000000000000062 /* Build configuration list for PBXNativeTarget \"ReflexTests\" */;
+			buildPhases = (A10000000000000000000073 /* Sources */, A10000000000000000000022 /* Frameworks */, A10000000000000000000074 /* Resources */);
+			buildRules = ();
+			dependencies = (A10000000000000000000081 /* PBXTargetDependency */);
+			name = ReflexTests;
+			productName = ReflexTests;
+			productReference = A10000000000000000000004 /* ReflexTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A10000000000000000000051 /* Project object */ = {
+			isa = PBXProject;
+			attributes = { BuildIndependentTargetsInParallel = 1; LastSwiftUpdateCheck = 2610; LastUpgradeCheck = 2610; TargetAttributes = { A10000000000000000000041 = { CreatedOnToolsVersion = 26.1; }; A10000000000000000000042 = { CreatedOnToolsVersion = 26.1; TestTargetID = A10000000000000000000041; }; }; };
+			buildConfigurationList = A10000000000000000000063 /* Build configuration list for PBXProject \"Reflex\" */;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base);
+			mainGroup = A10000000000000000000031;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (A10000000000000000000091 /* XCRemoteSwiftPackageReference \"jevkit\" */);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A10000000000000000000034 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (A10000000000000000000041 /* Reflex */, A10000000000000000000042 /* ReflexTests */);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A10000000000000000000072 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000074 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A10000000000000000000071 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000011 /* ReflexApp.swift in Sources */, A10000000000000000000013 /* AppModel.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000073 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000012 /* ReflexTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A10000000000000000000081 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = A10000000000000000000041 /* Reflex */; targetProxy = A10000000000000000000082 /* PBXContainerItemProxy */; };
+/* End PBXTargetDependency section */
+
+/* Begin PBXContainerItemProxy section */
+		A10000000000000000000082 /* PBXContainerItemProxy */ = {isa = PBXContainerItemProxy; containerPortal = A10000000000000000000051 /* Project object */; proxyType = 1; remoteGlobalIDString = A10000000000000000000041; remoteInfo = Reflex; };
+/* End PBXContainerItemProxy section */
+
+/* Begin XCBuildConfiguration section */
+		A10000000000000000000101 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_HARDENED_RUNTIME = YES; MACOSX_DEPLOYMENT_TARGET = 14.0; SDKROOT = macosx; SWIFT_VERSION = 6.0; }; name = Debug; };
+		A10000000000000000000102 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_HARDENED_RUNTIME = YES; MACOSX_DEPLOYMENT_TARGET = 14.0; SDKROOT = macosx; SWIFT_COMPILATION_MODE = wholemodule; SWIFT_VERSION = 6.0; }; name = Release; };
+		A10000000000000000000103 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { CODE_SIGN_ENTITLEMENTS = Reflex/Reflex.entitlements; CODE_SIGNING_ALLOWED = NO; CODE_SIGN_STYLE = Automatic; COMBINE_HIDPI_IMAGES = YES; CURRENT_PROJECT_VERSION = 1; ENABLE_TESTABILITY = YES; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity"; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks"; MARKETING_VERSION = 0.1.0; PRODUCT_BUNDLE_IDENTIFIER = com.isiomac.Reflex; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 6.0; }; name = Debug; };
+		A10000000000000000000104 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { CODE_SIGN_ENTITLEMENTS = Reflex/Reflex.entitlements; CODE_SIGN_STYLE = Automatic; COMBINE_HIDPI_IMAGES = YES; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity"; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks"; MARKETING_VERSION = 0.1.0; PRODUCT_BUNDLE_IDENTIFIER = com.isiomac.Reflex; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 6.0; }; name = Release; };
+		A10000000000000000000105 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { BUNDLE_LOADER = "$(TEST_HOST)"; CODE_SIGNING_ALLOWED = NO; GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = com.isiomac.ReflexTests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 6.0; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Reflex.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Reflex"; }; name = Debug; };
+		A10000000000000000000106 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { BUNDLE_LOADER = "$(TEST_HOST)"; GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = com.isiomac.ReflexTests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 6.0; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Reflex.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Reflex"; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A10000000000000000000061 /* Build configuration list for PBXNativeTarget \"Reflex\" */ = {isa = XCConfigurationList; buildConfigurations = (A10000000000000000000103 /* Debug */, A10000000000000000000104 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A10000000000000000000062 /* Build configuration list for PBXNativeTarget \"ReflexTests\" */ = {isa = XCConfigurationList; buildConfigurations = (A10000000000000000000105 /* Debug */, A10000000000000000000106 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A10000000000000000000063 /* Build configuration list for PBXProject \"Reflex\" */ = {isa = XCConfigurationList; buildConfigurations = (A10000000000000000000101 /* Debug */, A10000000000000000000102 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A10000000000000000000091 /* XCRemoteSwiftPackageReference \"jevkit\" */ = {isa = XCRemoteSwiftPackageReference; repositoryURL = "https://github.com/isiomaC/jevkit.git"; requirement = { kind = upToNextMajorVersion; minimumVersion = 0.1.0; }; };
+/* End XCRemoteSwiftPackageReference section */
+	};
+	rootObject = A10000000000000000000051 /* Project object */;
+}
