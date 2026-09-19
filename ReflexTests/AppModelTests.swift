@@ -24,12 +24,14 @@ struct AppModelTests {
     }
 
     @MainActor
-    @Test func liveModeShowsPhaseThreeDisclosure() {
-        let model = AppModel()
+    @Test func liveModeShowsPhaseThreeDisclosureWithoutMakingALiveRequest() {
+        let liveProvider = CountingDecisionProvider()
+        let model = AppModel(liveDecisionProvider: liveProvider)
 
         model.providerMode = .live
 
         #expect(model.liveModeMessage == "Live Jev decisions arrive in Phase 3.")
+        #expect(liveProvider.requestCount == 0)
     }
 
     @Test func debuggingSamplePrefersDebugging() {
@@ -49,5 +51,14 @@ struct AppModelTests {
         let provider: any SampleContextProvider = StaticSampleContextProvider()
 
         #expect(provider.currentContext() == .debugging)
+    }
+}
+
+private final class CountingDecisionProvider: DecisionProvider, @unchecked Sendable {
+    private(set) var requestCount = 0
+
+    func decision(for context: SampleContext) -> MockDecision {
+        requestCount += 1
+        return MockDecisionProvider().decision(for: context)
     }
 }

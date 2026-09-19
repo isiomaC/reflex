@@ -7,9 +7,16 @@ enum AppDestination: Hashable, Sendable {
     case settings
 }
 
-enum ProviderMode: Equatable, Sendable {
+enum ProviderMode: String, CaseIterable, Equatable, Sendable {
     case mock
     case live
+
+    var title: String {
+        switch self {
+        case .mock: "Mock sample"
+        case .live: "Live Jev (Phase 3)"
+        }
+    }
 }
 
 @MainActor
@@ -22,6 +29,8 @@ final class AppModel {
     private(set) var decision: MockDecision
 
     private let decisionProvider: any DecisionProvider
+    // Reserved for Phase 3. It is deliberately never invoked in this release.
+    private let liveDecisionProvider: (any DecisionProvider)?
     private let samples: [SampleContext]
     private var sampleIndex: Int
 
@@ -31,12 +40,14 @@ final class AppModel {
 
     init(
         sampleContextProvider: any SampleContextProvider = StaticSampleContextProvider(),
-        decisionProvider: any DecisionProvider = MockDecisionProvider()
+        decisionProvider: any DecisionProvider = MockDecisionProvider(),
+        liveDecisionProvider: (any DecisionProvider)? = nil
     ) {
         let initialContext = sampleContextProvider.currentContext()
         let availableSamples = SampleContext.allCases
 
         self.decisionProvider = decisionProvider
+        self.liveDecisionProvider = liveDecisionProvider
         samples = availableSamples
         context = initialContext
         decision = decisionProvider.decision(for: initialContext)
