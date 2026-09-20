@@ -9,6 +9,9 @@ struct ReflexApp: App {
     var body: some Scene {
         WindowGroup("Reflex", id: "reflex-main") {
             ReflexRootView(model: model)
+                .task {
+                    model.startLocalContextCapture()
+                }
         }
         .commands {
             CommandGroup(replacing: .appSettings) {
@@ -32,16 +35,16 @@ struct ReflexApp: App {
 
             Divider()
 
-            Button(model.isPaused ? "Resume sample context" : "Pause sample context") {
+            Button(model.isPaused ? "Resume local context" : "Pause local context") {
                 model.isPaused.toggle()
             }
-            .accessibilityLabel(model.isPaused ? "Resume sample context" : "Pause sample context")
+            .accessibilityLabel(model.isPaused ? "Resume local context" : "Pause local context")
 
-            Button("Capture sample context") {
-                model.captureNextSample()
+            Button("Capture local context") {
+                model.captureLocalContext()
             }
             .disabled(model.isPaused)
-            .accessibilityLabel("Capture sample context")
+            .accessibilityLabel("Capture local context")
 
             Divider()
 

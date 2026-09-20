@@ -12,6 +12,7 @@ struct LensView: View {
                     decisionStatus(at: timeline.date)
                 }
                 contextCard
+                sentContextCard
                 decisionGrid
                 controls
             }
@@ -24,13 +25,13 @@ struct LensView: View {
                 Button(model.isPaused ? "Resume" : "Pause", systemImage: model.isPaused ? "play.fill" : "pause.fill") {
                     model.isPaused.toggle()
                 }
-                .accessibilityLabel(model.isPaused ? "Resume sample context" : "Pause sample context")
+                .accessibilityLabel(model.isPaused ? "Resume local context" : "Pause local context")
 
                 Button("Capture", systemImage: "arrow.clockwise") {
-                    model.captureNextSample()
+                    model.captureLocalContext()
                 }
                 .disabled(model.isPaused)
-                .accessibilityLabel("Capture sample context")
+                .accessibilityLabel("Capture local context")
             }
         }
     }
@@ -39,14 +40,14 @@ struct LensView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Decision Lens")
                 .font(.largeTitle.bold())
-            Text(model.isPaused ? "Sample feed paused" : "Mock decisions for transparent sample context")
+            Text(model.isPaused ? "Local context capture paused" : "Local context stays on this Mac in mock mode")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
     }
 
     private var privacyNotice: some View {
-        Label("Mock sample — no desktop context is being observed", systemImage: "eye.slash")
+        Label("Mock mode — sanitized local context remains on this Mac", systemImage: "eye.slash")
             .font(.headline)
             .foregroundStyle(.primary)
             .padding(16)
@@ -78,7 +79,7 @@ struct LensView: View {
     private var providerModeTitle: String {
         switch model.providerMode {
         case .mock:
-            "Mock sample selected"
+            "Mock decisions — local-only context"
         case .live:
             "Live Jev selected — unavailable until Phase 3"
         }
@@ -90,13 +91,50 @@ struct LensView: View {
 
     private var contextCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label(model.context.sourceLabel, systemImage: "document.text")
+            Label("Local context", systemImage: "macwindow")
                 .font(.headline)
                 .foregroundStyle(.secondary)
-            Text(model.context.title)
-                .font(.title3.bold())
-            Text(model.context.summary)
+            if let context = model.localContext {
+                HStack {
+                    Text(context.activeApplication.name.isEmpty ? "Unknown app" : context.activeApplication.name)
+                        .font(.title3.bold())
+                    if model.isUsingReducedContext {
+                        Label("Reduced context", systemImage: "rectangle.badge.xmark")
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.orange)
+                    }
+                }
+                Text(context.activeWindow?.title ?? "Window metadata is unavailable or not enabled.")
+                    .foregroundStyle(.secondary)
+            } else {
+                Text("No local context captured")
+                    .font(.title3.bold())
+                Text("Capture local context to inspect the privacy-bounded snapshot on this Mac.")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.background, in: .rect(cornerRadius: 16))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(.quaternary, lineWidth: 1)
+        }
+    }
+
+    private var sentContextCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Label("Sent to Jev", systemImage: "shield.lefthalf.filled")
+                .font(.headline)
+            Text("This exact sanitized payload remains local in mock mode. No Jev request is made.")
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
+            Text(model.sanitizedContextJSON ?? "Capture local context to preview the sanitized payload.")
+                .font(.system(.caption, design: .monospaced))
+                .textSelection(.enabled)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+                .background(.quaternary, in: .rect(cornerRadius: 10))
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -152,16 +190,16 @@ struct LensView: View {
 
     private var controls: some View {
         HStack(spacing: 12) {
-            Button(model.isPaused ? "Resume sample context" : "Pause sample context") {
+            Button(model.isPaused ? "Resume local context" : "Pause local context") {
                 model.isPaused.toggle()
             }
-            .accessibilityLabel(model.isPaused ? "Resume sample context" : "Pause sample context")
+            .accessibilityLabel(model.isPaused ? "Resume local context" : "Pause local context")
 
-            Button("Capture sample context") {
-                model.captureNextSample()
+            Button("Capture local context") {
+                model.captureLocalContext()
             }
             .disabled(model.isPaused)
-            .accessibilityLabel("Capture sample context")
+            .accessibilityLabel("Capture local context")
         }
         .controlSize(.large)
     }

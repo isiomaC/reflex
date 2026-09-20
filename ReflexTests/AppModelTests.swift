@@ -4,6 +4,42 @@ import Testing
 
 struct AppModelTests {
     @MainActor
+    @Test func localContextCaptureDoesNothingWhilePaused() async {
+        let captureController = CaptureController()
+        let model = AppModel(contextCaptureController: captureController)
+        model.isPaused = true
+
+        model.captureLocalContext()
+        await Task.yield()
+
+        #expect(await captureController.captureCount == 0)
+    }
+
+    @MainActor
+    @Test func localContextCaptureUsesTheExplicitCapturePath() async {
+        let captureController = CaptureController()
+        let model = AppModel(contextCaptureController: captureController)
+
+        model.captureLocalContext()
+        await Task.yield()
+
+        #expect(await captureController.captureCount == 1)
+    }
+
+    @MainActor
+    @Test func missingWindowMetadataIsReportedAsReducedContext() {
+        let model = AppModel()
+        let snapshot = ContextSnapshot(
+            activeApplication: ApplicationContext(name: "Reflex", bundleIdentifier: "com.isiomac.Reflex")
+        )
+
+        model.receiveLocalContext(snapshot)
+
+        #expect(model.isUsingReducedContext)
+        #expect(model.sanitizedContextJSON?.contains("com.isiomac.Reflex") == true)
+    }
+
+    @MainActor
     @Test func providerModeRestoresFromTheSameDefaultsStore() {
         let suiteName = "ReflexTests.providerMode.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!
@@ -100,6 +136,18 @@ struct AppModelTests {
 
         #expect(provider.currentContext() == .debugging)
     }
+}
+
+private actor CaptureController: ContextCaptureControlling {
+    private(set) var captureCount = 0
+
+    func captureNow() {
+        captureCount += 1
+    }
+
+    func pause() {}
+    func resume() {}
+    func foregroundApplicationDidChange() {}
 }
 
 private final class CountingDecisionProvider: DecisionProvider, @unchecked Sendable {

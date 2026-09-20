@@ -50,9 +50,51 @@ struct SettingsView: View {
                 }
             }
 
+            Section("Local context") {
+                Toggle("Include clipboard in explicit captures", isOn: $model.isClipboardCaptureEnabled)
+                Text("Off by default. Clipboard content is never sent in mock mode; the Lens only shows its sanitized descriptor.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+
+                Toggle("Include active-window metadata", isOn: $model.isWindowMetadataEnabled)
+                    .disabled(true)
+
+                Button("Enable window metadata access") {
+                    model.requestWindowMetadataAccess()
+                }
+                .disabled(model.isWindowMetadataEnabled)
+
+                Text("This opens macOS Accessibility permission only after you choose to enable it. Without it, Reflex uses reduced context.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+
+                HStack {
+                    Button("Capture local context") {
+                        model.captureLocalContext()
+                    }
+                    .disabled(model.isPaused)
+
+                    Button("Clear local context") {
+                        model.clearLocalContext()
+                    }
+                    .disabled(model.localContext == nil)
+                }
+            }
+
+            Section("Developer") {
+                Picker("Minimum capture interval", selection: $model.minimumContextInterval) {
+                    Text("1 second").tag(1.0)
+                    Text("5 seconds").tag(5.0)
+                    Text("10 seconds").tag(10.0)
+                }
+                Text("This bounds how often local context may be captured after app changes.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+
             Section("Phase boundary") {
                 Label("Live Jev decisions arrive in Phase 3.", systemImage: "lock.fill")
-                Text("Saving a key does not send it, make a network request, or enable desktop observation.")
+                Text("Saving a key does not send it or make a network request. Local context is controlled by the privacy settings above.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
