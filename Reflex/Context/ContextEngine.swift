@@ -3,19 +3,22 @@ import Foundation
 actor ContextEngine {
     typealias SnapshotHandler = @Sendable (ContextSnapshot) async -> Void
     typealias Now = @Sendable () async -> Date
+    typealias ElapsedNow = @Sendable () async -> Duration
     typealias Sleeper = @Sendable (Duration) async throws -> Void
 
     private let activeApplication: @MainActor () -> ApplicationContext?
     private let activeWindow: @MainActor () -> WindowContext?
     private let clipboard: @MainActor () -> ClipboardContext?
     private let minimumInterval: Duration
+    private let debounceInterval: Duration
     private let now: Now
+    private let elapsedNow: ElapsedNow
     private let sleep: Sleeper
     private let onSnapshot: SnapshotHandler
 
     private var isPaused = false
     private var lastEmittedSnapshot: ContextSnapshot?
-    private var lastEmissionDate: Date?
+    private var lastEmissionElapsed: Duration?
     private var recentApplications: [ApplicationContext] = []
     private var debounceTask: Task<Void, Never>?
 
@@ -25,7 +28,9 @@ actor ContextEngine {
         activeWindowProvider: some ActiveWindowProvider,
         clipboardProvider: some ClipboardProvider,
         minimumInterval: Duration = .seconds(1),
+        debounceInterval: Duration = .seconds(1),
         now: @escaping Now = { Date() },
+        elapsedNow: ElapsedNow? = nil,
         sleep: @escaping Sleeper = { try await Task.sleep(for: $0) },
         onSnapshot: @escaping SnapshotHandler
     ) {
@@ -33,7 +38,14 @@ actor ContextEngine {
         activeWindow = { activeWindowProvider.activeWindow() }
         clipboard = { clipboardProvider.clipboardContents() }
         self.minimumInterval = minimumInterval
+        self.debounceInterval = debounceInterval
         self.now = now
+        if let elapsedNow {
+            self.elapsedNow = elapsedNow
+        } else {
+            let start = ContinuousClock.now
+            self.elapsedNow = { ContinuousClock.now - start }
+        }
         self.sleep = sleep
         self.onSnapshot = onSnapshot
     }
@@ -57,10 +69,11 @@ actor ContextEngine {
             return
         }
 
-        let timestamp = await now()
-        guard canEmit(at: timestamp) else {
+        let elapsed = await elapsedNow()
+        guard canEmit(at: elapsed) else {
             return
         }
+        let timestamp = await now()
 
         record(application)
         let snapshot = ContextSnapshot(
@@ -76,7 +89,7 @@ actor ContextEngine {
         }
 
         lastEmittedSnapshot = snapshot
-        lastEmissionDate = timestamp
+        lastEmissionElapsed = elapsed
         await onSnapshot(snapshot)
     }
 
@@ -88,7 +101,7 @@ actor ContextEngine {
         debounceTask?.cancel()
         debounceTask = Task { [weak self, sleep] in
             do {
-                try await sleep(.seconds(1))
+                try await sleep(self?.debounceInterval ?? .seconds(1))
             } catch {
                 return
             }
@@ -99,11 +112,11 @@ actor ContextEngine {
         }
     }
 
-    private func canEmit(at timestamp: Date) -> Bool {
-        guard let lastEmissionDate else {
+    private func canEmit(at elapsed: Duration) -> Bool {
+        guard let lastEmissionElapsed else {
             return true
         }
-        return timestamp.timeIntervalSince(lastEmissionDate) >= minimumInterval.timeInterval
+        return elapsed >= lastEmissionElapsed + minimumInterval
     }
 
     private func record(_ application: ApplicationContext) {
@@ -114,12 +127,5 @@ actor ContextEngine {
 
     private func snapshotMatchesLastEmission(_ snapshot: ContextSnapshot) -> Bool {
         lastEmittedSnapshot?.isMateriallyEqual(to: snapshot) ?? false
-    }
-}
-
-private extension Duration {
-    var timeInterval: TimeInterval {
-        let components = components
-        return TimeInterval(components.seconds) + TimeInterval(components.attoseconds) / 1_000_000_000_000_000_000
     }
 }

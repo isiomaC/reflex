@@ -84,6 +84,7 @@ struct ContextEngineTests {
             Date(timeIntervalSince1970: 1),
             Date(timeIntervalSince1970: 11)
         ])
+        let elapsed = TestElapsedClock(values: [.zero, .seconds(1), .seconds(11)])
         let app = MutableApplicationProvider(application: ApplicationContext(name: "Xcode", bundleIdentifier: "com.apple.dt.Xcode"))
         let engine = ContextEngine(
             activeApplicationProvider: app,
@@ -91,6 +92,7 @@ struct ContextEngineTests {
             clipboardProvider: FakeClipboardProvider(clipboard: nil),
             minimumInterval: .seconds(10),
             now: { await clock.next() },
+            elapsedNow: { await elapsed.next() },
             onSnapshot: { await collector.append($0) }
         )
 
@@ -100,6 +102,59 @@ struct ContextEngineTests {
         await engine.captureNow()
 
         #expect(await collector.values().map(\.activeApplication.name) == ["Xcode", "Safari"])
+    }
+
+    @Test func wallClockRegressionDoesNotBlockElapsedCapture() async {
+        let collector = SnapshotCollector()
+        let app = MutableApplicationProvider(application: ApplicationContext(name: "Xcode", bundleIdentifier: "com.apple.dt.Xcode"))
+        let dates = TestClock(dates: [
+            Date(timeIntervalSince1970: 100),
+            Date(timeIntervalSince1970: 50)
+        ])
+        let elapsed = TestElapsedClock(values: [.zero, .milliseconds(20)])
+        let engine = ContextEngine(
+            activeApplicationProvider: app,
+            activeWindowProvider: FakeActiveWindowProvider(window: nil),
+            clipboardProvider: FakeClipboardProvider(clipboard: nil),
+            minimumInterval: .milliseconds(20),
+            now: { await dates.next() },
+            elapsedNow: { await elapsed.next() },
+            onSnapshot: { await collector.append($0) }
+        )
+
+        await engine.captureNow()
+        app.set(ApplicationContext(name: "Safari", bundleIdentifier: "com.apple.Safari"))
+        await engine.captureNow()
+
+        #expect(await collector.values().map(\.activeApplication.name) == ["Xcode", "Safari"])
+    }
+
+    @Test func rapidForegroundChangesCaptureOnlyTheLatestApplication() async {
+        let collector = SnapshotCollector()
+        let sleeper = RecordingSleeper()
+        let application = MutableApplicationProvider(
+            application: ApplicationContext(name: "Xcode", bundleIdentifier: "com.apple.dt.Xcode")
+        )
+        let engine = ContextEngine(
+            activeApplicationProvider: application,
+            activeWindowProvider: FakeActiveWindowProvider(window: nil),
+            clipboardProvider: FakeClipboardProvider(clipboard: nil),
+            minimumInterval: .zero,
+            debounceInterval: .milliseconds(5),
+            sleep: { duration in try await sleeper.sleep(for: duration) },
+            onSnapshot: { await collector.append($0) }
+        )
+
+        await engine.foregroundApplicationDidChange()
+        await eventually { await sleeper.waitingCount() == 1 }
+        application.set(ApplicationContext(name: "Safari", bundleIdentifier: "com.apple.Safari"))
+        await engine.foregroundApplicationDidChange()
+        await eventually { await sleeper.waitingCount() == 2 }
+        await sleeper.releaseAll()
+
+        await eventually { await collector.values().count == 1 }
+        #expect(await collector.values().map(\.activeApplication.name) == ["Safari"])
+        #expect(await sleeper.requestedDurations() == [.milliseconds(5), .milliseconds(5)])
     }
 
     @Test func recentApplicationHistoryIsCappedAtFive() async throws {
@@ -150,10 +205,39 @@ private actor TestClock {
     func next() -> Date { dates.removeFirst() }
 }
 
+private actor TestElapsedClock {
+    private var values: [Duration]
+    init(values: [Duration]) { self.values = values }
+    func next() -> Duration { values.removeFirst() }
+}
+
 private actor SleepGate {
     private var continuation: CheckedContinuation<Void, Never>?
     func wait() async { await withCheckedContinuation { continuation = $0 } }
     func release() { continuation?.resume(); continuation = nil }
+}
+
+private actor RecordingSleeper {
+    private var durations: [Duration] = []
+    private var continuations: [CheckedContinuation<Void, Error>] = []
+
+    func sleep(for duration: Duration) async throws {
+        durations.append(duration)
+        try await withCheckedThrowingContinuation { continuation in
+            continuations.append(continuation)
+        }
+    }
+
+    func waitingCount() -> Int { continuations.count }
+    func requestedDurations() -> [Duration] { durations }
+
+    func releaseAll() {
+        let pending = continuations
+        continuations = []
+        for continuation in pending {
+            continuation.resume()
+        }
+    }
 }
 
 @MainActor
