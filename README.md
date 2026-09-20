@@ -1,8 +1,8 @@
 # Reflex
 
 Reflex is a SwiftUI-native macOS app for examining local, privacy-bounded
-context alongside deterministic mock decisions. This repository currently
-contains the Phase 2 local-context foundation.
+context alongside deterministic mock and live Jev decisions. This repository
+currently contains the Phase 3 live Decision Lens.
 
 ## Requirements
 
@@ -10,7 +10,7 @@ contains the Phase 2 local-context foundation.
 - Xcode 26.1 or later
 
 The Xcode project resolves [JevKit](https://github.com/isiomaC/jevkit) as a
-Swift Package dependency from version `0.1.0`.
+Swift Package dependency from version `0.1.1`.
 
 ## Build and test
 
@@ -48,23 +48,26 @@ The capture controls are available in the Lens, the menu bar, and Settings:
   snapshot.
 - Clear the currently displayed local snapshot from the app.
 
-The Lens shows the captured local snapshot and the exact sanitized payload
-that a future Jev integration could use. Application names, window titles, and
-clipboard text are redacted from that payload; only safe descriptors such as a
-bundle identifier, clipboard content type, length, and truncation state remain.
+The Lens shows the captured local snapshot and the exact sanitized payload used
+for a live Jev decision. Application names, window titles, and clipboard text
+are redacted from that payload; only safe descriptors such as a bundle
+identifier, clipboard content type, length, and truncation state remain.
 
 ## API key
 
 Open **Reflex → Settings…**, enter a Jev API key, then choose **Save key**.
 Reflex stores the key in your macOS Keychain and never displays its value.
 
-The key is stored only. Phase 2 remains mock-only: it does not use the key to
-contact Jev. Selecting the visible Live Jev option does not enable a request;
-live decisions arrive in Phase 3.
+To use Jev, select **Live Jev** in Settings, then capture local context or use
+**Refresh live decision**. Reflex sends one request containing three independent
+typed judgments—activity, intervention usefulness, and a passive in-app
+suggestion—over only the sanitized Lens payload. It never performs desktop
+actions from a decision. Responses for superseded snapshots are ignored.
 
 ## Privacy boundary
 
-Context stays on the Mac in mock mode, and no Jev request is made. Reflex does
+Context stays on the Mac in mock mode, and no Jev request is made. In live mode,
+only the exact sanitized payload displayed in Lens is sent to Jev. Reflex does
 not perform keylogging, take screenshots, use the camera or microphone, read
 full documents, or continuously inspect clipboard contents. It requests
 Accessibility permission only after an explicit user action to enable

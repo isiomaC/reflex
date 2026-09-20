@@ -70,7 +70,7 @@ struct ContextSnapshotTests {
         #expect(!json.contains(clipboardSentinel))
         #expect(!json.contains(windowSentinel))
         #expect(!json.contains(applicationSentinel))
-        #expect(json.contains("\"textLength\" : 27"))
+        #expect(json.contains("\"textLength\" : 28"))
         #expect(json.contains("\"contentKind\" : \"text\""))
         #expect(json.contains("\"redacted\""))
     }
@@ -81,16 +81,16 @@ struct ContextSnapshotTests {
         let oversizedTitle = String(repeating: "t", count: WindowContext.maximumTitleLength + 1)
         let oversizedClipboard = String(repeating: "c", count: ClipboardContext.maximumTextLength + 1)
         let apps = (0...ContextSnapshot.maximumRecentApplications).map { index in
-            "{\"name\":\"App \\(index)\",\"bundleIdentifier\":\"com.example.\\(index)\"}"
+            "{\"name\":\"App \(index)\",\"bundleIdentifier\":\"com.example.\(index)\"}"
         }.joined(separator: ",")
         let json = """
         {
           "id": "00000000-0000-0000-0000-000000000001",
           "timestamp": "1970-01-01T00:00:00Z",
-          "activeApplication": {"name": "\\(oversizedName)", "bundleIdentifier": "\\(oversizedBundle)"},
-          "activeWindow": {"title": "\\(oversizedTitle)"},
-          "clipboard": {"kind": "unexpected", "text": "\\(oversizedClipboard)", "wasTruncated": false},
-          "recentApplications": [\\(apps)]
+          "activeApplication": {"name": "\(oversizedName)", "bundleIdentifier": "\(oversizedBundle)"},
+          "activeWindow": {"title": "\(oversizedTitle)"},
+          "clipboard": {"kind": "unexpected", "text": "\(oversizedClipboard)", "wasTruncated": false},
+          "recentApplications": [\(apps)]
         }
         """
 

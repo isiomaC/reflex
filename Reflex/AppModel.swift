@@ -48,6 +48,9 @@ final class AppModel {
     var providerMode: ProviderMode {
         didSet {
             defaults.set(providerMode.rawValue, forKey: Self.providerModeDefaultsKey)
+            if providerMode == .live {
+                requestLiveDecisionForCurrentContext()
+            }
         }
     }
     var isPaused = false {
@@ -77,10 +80,12 @@ final class AppModel {
     private(set) var decision: MockDecision
     private(set) var decisionUpdatedAt: Date
     private(set) var localContext: ContextSnapshot?
+    private(set) var liveDecision: DecisionLensResult?
+    private(set) var liveDecisionError: LiveDecisionError?
 
     private let decisionProvider: any DecisionProvider
-    // Reserved for Phase 3. It is deliberately never invoked in this release.
-    private let liveDecisionProvider: (any DecisionProvider)?
+    private let liveDecisionProvider: (any LiveDecisionProviding)?
+    private let decisionCoordinator = DecisionLensCoordinator()
     private let samples: [SampleContext]
     private let now: () -> Date
     private let defaults: UserDefaults
@@ -90,7 +95,7 @@ final class AppModel {
     private let accessibilityPermissionRequester: @MainActor () -> Void
 
     var liveModeMessage: String? {
-        providerMode == .live ? "Live Jev decisions arrive in Phase 3." : nil
+        providerMode == .live ? "Live Jev uses the sanitized payload shown in Lens." : nil
     }
 
     var isUsingReducedContext: Bool {
@@ -104,7 +109,7 @@ final class AppModel {
     init(
         sampleContextProvider: any SampleContextProvider = StaticSampleContextProvider(),
         decisionProvider: any DecisionProvider = MockDecisionProvider(),
-        liveDecisionProvider: (any DecisionProvider)? = nil,
+        liveDecisionProvider: (any LiveDecisionProviding)? = LiveDecisionProvider(),
         now: @escaping () -> Date = Date.init,
         defaults: UserDefaults = .standard,
         contextCaptureController: (any ContextCaptureControlling)? = nil,
@@ -178,6 +183,12 @@ final class AppModel {
 
     func receiveLocalContext(_ snapshot: ContextSnapshot) {
         localContext = snapshot
+        requestLiveDecision(for: snapshot)
+    }
+
+    func requestLiveDecisionForCurrentContext() {
+        guard let localContext else { return }
+        requestLiveDecision(for: localContext)
     }
 
     func decisionFreshness(at date: Date) -> DecisionFreshness {
@@ -198,6 +209,33 @@ final class AppModel {
     private func foregroundApplicationDidChange() {
         let controller = contextCaptureController
         Task { await controller?.foregroundApplicationDidChange() }
+    }
+
+    private func requestLiveDecision(for snapshot: ContextSnapshot) {
+        guard providerMode == .live, !isPaused, let liveDecisionProvider else { return }
+        liveDecisionError = nil
+        let coordinator = decisionCoordinator
+        Task {
+            let request = await coordinator.beginRequest(for: snapshot.id)
+            do {
+                let result = try await liveDecisionProvider.decide(for: snapshot)
+                guard let accepted = await coordinator.accept(result, for: request) else { return }
+                liveDecision = accepted
+                decisionUpdatedAt = now()
+            } catch is CancellationError {
+                return
+            } catch let error as LiveDecisionError {
+                guard await coordinator.accept(errorResult(for: snapshot), for: request) != nil else { return }
+                liveDecisionError = error
+            } catch {
+                guard await coordinator.accept(errorResult(for: snapshot), for: request) != nil else { return }
+                liveDecisionError = .offline
+            }
+        }
+    }
+
+    private func errorResult(for snapshot: ContextSnapshot) -> DecisionLensResult {
+        DecisionLensResult(snapshotID: snapshot.id, latency: .zero, activity: ActivityDecision(selected: .other, rawProbabilities: [.other: 1]), intervention: InterventionDecision(selected: false, rawProbabilities: [false: 1]), suggestedAction: SuggestedActionDecision(selected: .doNothing, rawProbabilities: [.doNothing: 1]))
     }
 
     private func rebuildContextCaptureControllerIfNeeded() {

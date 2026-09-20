@@ -14,6 +14,7 @@ struct LensView: View {
                 contextCard
                 sentContextCard
                 decisionGrid
+                liveDetails
                 controls
             }
             .padding(28)
@@ -40,14 +41,14 @@ struct LensView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Decision Lens")
                 .font(.largeTitle.bold())
-            Text(model.isPaused ? "Local context capture paused" : "Local context stays on this Mac in mock mode")
+            Text(model.isPaused ? "Local context capture paused" : model.providerMode == .live ? "Live Jev evaluates only the sanitized payload below" : "Local context stays on this Mac in mock mode")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
     }
 
     private var privacyNotice: some View {
-        Label("Mock mode — sanitized local context remains on this Mac", systemImage: "eye.slash")
+        Label(model.providerMode == .live ? "Live mode — only the sanitized payload may leave this Mac" : "Mock mode — sanitized local context remains on this Mac", systemImage: "eye.slash")
             .font(.headline)
             .foregroundStyle(.primary)
             .padding(16)
@@ -81,12 +82,12 @@ struct LensView: View {
         case .mock:
             "Mock decisions — local-only context"
         case .live:
-            "Live Jev selected — unavailable until Phase 3"
+            model.liveDecisionError?.message ?? "Live Jev — sanitized context only"
         }
     }
 
     private var providerModeSystemImage: String {
-        model.providerMode == .mock ? "circle.fill" : "lock.fill"
+        model.providerMode == .mock ? "circle.fill" : model.liveDecisionError == nil ? "checkmark.circle.fill" : "exclamationmark.triangle.fill"
     }
 
     private var contextCard: some View {
@@ -126,7 +127,7 @@ struct LensView: View {
         VStack(alignment: .leading, spacing: 10) {
             Label("Sent to Jev", systemImage: "shield.lefthalf.filled")
                 .font(.headline)
-            Text("This exact sanitized payload remains local in mock mode. No Jev request is made.")
+            Text(model.providerMode == .live ? "This exact sanitized payload is sent to Jev for the live decision." : "This exact sanitized payload remains local in mock mode. No Jev request is made.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
             Text(model.sanitizedContextJSON ?? "Capture local context to preview the sanitized payload.")
@@ -148,11 +149,11 @@ struct LensView: View {
     private var decisionGrid: some View {
         Grid(horizontalSpacing: 16, verticalSpacing: 16) {
             GridRow {
-                decisionCard("Activity", value: model.decision.activity.selected.rawValue.capitalized, systemImage: "bolt.fill")
-                decisionCard("Confidence", value: Text(model.decision.activity.confidence, format: .percent.precision(.fractionLength(0))), systemImage: "chart.bar.fill")
+                decisionCard("Activity", value: activeActivity.rawValue.capitalized, systemImage: "bolt.fill")
+                decisionCard("Confidence", value: Text(activeActivityConfidence, format: .percent.precision(.fractionLength(0))), systemImage: "chart.bar.fill")
             }
             GridRow {
-                decisionCard("Intervention", value: Text(model.decision.interventionUsefulness, format: .percent.precision(.fractionLength(0))), systemImage: "hand.raised.fill")
+                decisionCard("Intervention", value: Text(activeInterventionUsefulness, format: .percent.precision(.fractionLength(0))), systemImage: "hand.raised.fill")
                 suggestionCard
             }
         }
@@ -180,7 +181,7 @@ struct LensView: View {
             Label("Suggestion", systemImage: "lightbulb.fill")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-            Text(model.decision.suggestion)
+            Text(activeSuggestion)
                 .font(.body)
         }
         .padding(18)
@@ -201,6 +202,13 @@ struct LensView: View {
             .disabled(model.isPaused)
             .accessibilityLabel("Capture local context")
 
+            if model.providerMode == .live {
+                Button("Refresh live decision") {
+                    model.requestLiveDecisionForCurrentContext()
+                }
+                .disabled(model.localContext == nil || model.isPaused)
+            }
+
             Button("Capture Clipboard Now") {
                 model.captureClipboardNow()
             }
@@ -208,5 +216,67 @@ struct LensView: View {
             .accessibilityLabel("Capture clipboard now")
         }
         .controlSize(.large)
+    }
+
+    @ViewBuilder
+    private var liveDetails: some View {
+        if let decision = model.liveDecision, model.providerMode == .live {
+            VStack(alignment: .leading, spacing: 10) {
+                Label("Live decision details", systemImage: "chart.bar.doc.horizontal")
+                    .font(.headline)
+                probabilityRow("Activity", values: decision.activity.rawProbabilities.map { ($0.key.rawValue, $0.value) })
+                probabilityRow("Suggested action", values: decision.suggestedAction.rawProbabilities.map { ($0.key.rawValue, $0.value) })
+                HStack {
+                    Text("Intervention usefulness")
+                    Spacer()
+                    Text(decision.intervention.usefulness, format: .percent.precision(.fractionLength(0)))
+                }
+                .font(.subheadline)
+                HStack(spacing: 4) {
+                    Text("Request latency:")
+                    Text(verbatim: String(describing: decision.latency))
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+            .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(.background, in: .rect(cornerRadius: 16))
+            .overlay {
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(.quaternary, lineWidth: 1)
+            }
+        }
+    }
+
+    private func probabilityRow(_ title: String, values: [(String, Double)]) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title).font(.subheadline.weight(.medium))
+            ForEach(values.sorted { $0.0 < $1.0 }, id: \.0) { label, probability in
+                HStack {
+                    Text(label)
+                    Spacer()
+                    Text(probability, format: .percent.precision(.fractionLength(0)))
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var activeActivity: Activity {
+        model.liveDecision?.activity.selected ?? model.decision.activity.selected
+    }
+
+    private var activeActivityConfidence: Double {
+        model.liveDecision?.activity.confidence ?? model.decision.activity.confidence
+    }
+
+    private var activeInterventionUsefulness: Double {
+        model.liveDecision?.intervention.usefulness ?? model.decision.interventionUsefulness
+    }
+
+    private var activeSuggestion: String {
+        model.liveDecision.map { InterventionPolicy().suggestion(for: $0)?.message ?? "No suggestion right now." } ?? model.decision.suggestion
     }
 }
