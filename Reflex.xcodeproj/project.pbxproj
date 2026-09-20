@@ -28,6 +28,7 @@
 		A2000000000000000000000B /* ClipboardProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000C /* ClipboardProvider.swift */; };
 		A2000000000000000000000D /* ContextEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000E /* ContextEngine.swift */; };
 		A2000000000000000000000F /* ContextEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* ContextEngineTests.swift */; };
+		A30000000000000000000001 /* LiveDecisionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30000000000000000000002 /* LiveDecisionProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +56,7 @@
 		A2000000000000000000000C /* ClipboardProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Context/ClipboardProvider.swift; sourceTree = "<group>"; };
 		A2000000000000000000000E /* ContextEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Context/ContextEngine.swift; sourceTree = "<group>"; };
 		A20000000000000000000010 /* ContextEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextEngineTests.swift; sourceTree = "<group>"; };
+		A30000000000000000000002 /* LiveDecisionProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveDecisionProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,7 +88,7 @@
 		};
 		A10000000000000000000036 /* Services */ = {
 			isa = PBXGroup;
-			children = (A1000000000000000000000C /* SampleContextProvider.swift */, A1000000000000000000000D /* MockDecisionProvider.swift */, A1000000000000000000000F /* CredentialStore.swift */);
+			children = (A1000000000000000000000C /* SampleContextProvider.swift */, A1000000000000000000000D /* MockDecisionProvider.swift */, A1000000000000000000000F /* CredentialStore.swift */, A30000000000000000000002 /* LiveDecisionProvider.swift */);
 			path = Services;
 			sourceTree = "<group>";
 		};
@@ -156,7 +158,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A10000000000000000000071 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000011 /* ReflexApp.swift in Sources */, A10000000000000000000013 /* AppModel.swift in Sources */, A10000000000000000000015 /* SampleContext.swift in Sources */, A10000000000000000000016 /* MockDecision.swift in Sources */, A10000000000000000000017 /* SampleContextProvider.swift in Sources */, A10000000000000000000018 /* MockDecisionProvider.swift in Sources */, A1000000000000000000001B /* CredentialStore.swift in Sources */, A1000000000000000000001C /* LensView.swift in Sources */, A1000000000000000000001D /* PhasePlaceholderView.swift in Sources */, A1000000000000000000001E /* SettingsView.swift in Sources */, A20000000000000000000001 /* ContextSnapshot.swift in Sources */, A20000000000000000000007 /* ActiveApplicationProvider.swift in Sources */, A20000000000000000000009 /* ActiveWindowProvider.swift in Sources */, A2000000000000000000000B /* ClipboardProvider.swift in Sources */, A2000000000000000000000D /* ContextEngine.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000071 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000011 /* ReflexApp.swift in Sources */, A10000000000000000000013 /* AppModel.swift in Sources */, A10000000000000000000015 /* SampleContext.swift in Sources */, A10000000000000000000016 /* MockDecision.swift in Sources */, A10000000000000000000017 /* SampleContextProvider.swift in Sources */, A10000000000000000000018 /* MockDecisionProvider.swift in Sources */, A1000000000000000000001B /* CredentialStore.swift in Sources */, A30000000000000000000001 /* LiveDecisionProvider.swift in Sources */, A1000000000000000000001C /* LensView.swift in Sources */, A1000000000000000000001D /* PhasePlaceholderView.swift in Sources */, A1000000000000000000001E /* SettingsView.swift in Sources */, A20000000000000000000001 /* ContextSnapshot.swift in Sources */, A20000000000000000000007 /* ActiveApplicationProvider.swift in Sources */, A20000000000000000000009 /* ActiveWindowProvider.swift in Sources */, A2000000000000000000000B /* ClipboardProvider.swift in Sources */, A2000000000000000000000D /* ContextEngine.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
 		A10000000000000000000073 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000012 /* ReflexTests.swift in Sources */, A10000000000000000000014 /* AppModelTests.swift in Sources */, A1000000000000000000001A /* CredentialStoreTests.swift in Sources */, A20000000000000000000003 /* ContextSnapshotTests.swift in Sources */, A20000000000000000000005 /* ContextProviderTests.swift in Sources */, A2000000000000000000000F /* ContextEngineTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
@@ -184,7 +186,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		A10000000000000000000091 /* XCRemoteSwiftPackageReference \"jevkit\" */ = {isa = XCRemoteSwiftPackageReference; repositoryURL = "https://github.com/isiomaC/jevkit.git"; requirement = { kind = upToNextMajorVersion; minimumVersion = 0.1.0; }; };
+		A10000000000000000000091 /* XCRemoteSwiftPackageReference \"jevkit\" */ = {isa = XCRemoteSwiftPackageReference; repositoryURL = "https://github.com/isiomaC/jevkit.git"; requirement = { kind = upToNextMajorVersion; minimumVersion = 0.1.1; }; };
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */

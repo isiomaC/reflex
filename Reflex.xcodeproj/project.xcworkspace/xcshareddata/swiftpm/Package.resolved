@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/isiomaC/jevkit.git",
       "state" : {
-        "revision" : "70b7e04f9d1d19111e2f5952d62648f133e01ea2",
-        "version" : "0.1.0"
+        "revision" : "076e82c41ba31e68d2bfc13f30b9025198b2d2be",
+        "version" : "0.1.1"
       }
     }
   ],

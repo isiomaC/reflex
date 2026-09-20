@@ -21,7 +21,7 @@ struct AppModelTests {
         let model = AppModel(contextCaptureController: captureController)
 
         model.captureLocalContext()
-        await Task.yield()
+        await captureController.waitForCaptureCount(1)
 
         #expect(await captureController.captureCount == 1)
     }
@@ -33,7 +33,7 @@ struct AppModelTests {
         model.isClipboardCaptureEnabled = true
 
         model.captureClipboardNow()
-        await Task.yield()
+        await captureController.waitForClipboardCaptureCount(1)
 
         #expect(await captureController.clipboardCaptureCount == 1)
         #expect(await captureController.captureCount == 0)
@@ -111,7 +111,7 @@ struct AppModelTests {
     }
 
     @MainActor
-    @Test func liveModeShowsPhaseThreeDisclosureWithoutMakingALiveRequest() {
+    @Test func liveModeWaitsForLocalContextBeforeMakingARequest() {
         let liveProvider = CountingDecisionProvider()
         let suiteName = "ReflexTests.liveMode.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!
@@ -120,7 +120,7 @@ struct AppModelTests {
 
         model.providerMode = .live
 
-        #expect(model.liveModeMessage == "Live Jev decisions arrive in Phase 3.")
+        #expect(model.liveModeMessage == "Live Jev uses the sanitized payload shown in Lens.")
         #expect(liveProvider.requestCount == 0)
     }
 
@@ -166,13 +166,32 @@ private actor CaptureController: ContextCaptureControlling {
     func pause() {}
     func resume() {}
     func foregroundApplicationDidChange() {}
+
+    func waitForCaptureCount(_ expected: Int) async {
+        while captureCount < expected {
+            await Task.yield()
+        }
+    }
+
+    func waitForClipboardCaptureCount(_ expected: Int) async {
+        while clipboardCaptureCount < expected {
+            await Task.yield()
+        }
+    }
 }
 
-private final class CountingDecisionProvider: DecisionProvider, @unchecked Sendable {
+@MainActor
+private final class CountingDecisionProvider: LiveDecisionProviding {
     private(set) var requestCount = 0
 
-    func decision(for context: SampleContext) -> MockDecision {
+    func decide(for snapshot: ContextSnapshot) async throws -> DecisionLensResult {
         requestCount += 1
-        return MockDecisionProvider().decision(for: context)
+        return DecisionLensResult(
+            snapshotID: snapshot.id,
+            latency: .zero,
+            activity: ActivityDecision(selected: .other, rawProbabilities: [.other: 1]),
+            intervention: InterventionDecision(selected: false, rawProbabilities: [false: 1]),
+            suggestedAction: SuggestedActionDecision(selected: .doNothing, rawProbabilities: [.doNothing: 1])
+        )
     }
 }

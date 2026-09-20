@@ -100,9 +100,9 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
             }
 
-            Section("Phase boundary") {
-                Label("Live Jev decisions arrive in Phase 3.", systemImage: "lock.fill")
-                Text("Saving a key does not send it or make a network request. Local context is controlled by the privacy settings above.")
+            Section("Live decision boundary") {
+                Label("Live Jev sends only the Lens' sanitized payload.", systemImage: "shield.lefthalf.filled")
+                Text("Saving a key does not send it or make a network request. A live request occurs only after you select Live Jev and capture or refresh local context.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
