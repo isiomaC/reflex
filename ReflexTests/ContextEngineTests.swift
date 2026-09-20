@@ -77,6 +77,48 @@ struct ContextEngineTests {
         await eventually { await collector.values().count == 1 }
     }
 
+    @Test func automaticForegroundCaptureOmitsClipboard() async {
+        let collector = SnapshotCollector()
+        let gate = SleepGate()
+        let engine = ContextEngine(
+            activeApplicationProvider: MutableApplicationProvider(
+                application: ApplicationContext(name: "Safari", bundleIdentifier: "com.apple.Safari")
+            ),
+            activeWindowProvider: FakeActiveWindowProvider(window: nil),
+            clipboardProvider: FakeClipboardProvider(
+                clipboard: ClipboardContext(kind: .text, text: "private clipboard", wasTruncated: false)
+            ),
+            minimumInterval: .zero,
+            sleep: { _ in await gate.wait() },
+            onSnapshot: { await collector.append($0) }
+        )
+
+        await engine.foregroundApplicationDidChange()
+        await Task.yield()
+        await gate.release()
+
+        await eventually { await collector.values().count == 1 }
+        #expect(await collector.values().first?.clipboard == nil)
+    }
+
+    @Test func explicitClipboardCaptureIncludesClipboard() async {
+        let collector = SnapshotCollector()
+        let clipboard = ClipboardContext(kind: .text, text: "explicit clipboard", wasTruncated: false)
+        let engine = ContextEngine(
+            activeApplicationProvider: MutableApplicationProvider(
+                application: ApplicationContext(name: "Safari", bundleIdentifier: "com.apple.Safari")
+            ),
+            activeWindowProvider: FakeActiveWindowProvider(window: nil),
+            clipboardProvider: FakeClipboardProvider(clipboard: clipboard),
+            minimumInterval: .zero,
+            onSnapshot: { await collector.append($0) }
+        )
+
+        await engine.captureClipboardNow()
+
+        #expect(await collector.values().first?.clipboard == clipboard)
+    }
+
     @Test func minimumIntervalSuppressesCaptureUntilEnoughTimePasses() async {
         let collector = SnapshotCollector()
         let clock = TestClock(dates: [

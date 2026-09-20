@@ -65,6 +65,14 @@ actor ContextEngine {
     }
 
     func captureNow() async {
+        await capture(includeClipboard: false)
+    }
+
+    func captureClipboardNow() async {
+        await capture(includeClipboard: true)
+    }
+
+    private func capture(includeClipboard: Bool) async {
         guard !isPaused, let application = await activeApplication() else {
             return
         }
@@ -80,7 +88,7 @@ actor ContextEngine {
             timestamp: timestamp,
             activeApplication: application,
             activeWindow: await activeWindow(),
-            clipboard: await clipboard(),
+            clipboard: includeClipboard ? await clipboard() : nil,
             recentApplications: recentApplications
         )
 

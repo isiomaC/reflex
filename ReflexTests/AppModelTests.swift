@@ -27,6 +27,19 @@ struct AppModelTests {
     }
 
     @MainActor
+    @Test func clipboardCaptureUsesItsDedicatedExplicitPath() async {
+        let captureController = CaptureController()
+        let model = AppModel(contextCaptureController: captureController)
+        model.isClipboardCaptureEnabled = true
+
+        model.captureClipboardNow()
+        await Task.yield()
+
+        #expect(await captureController.clipboardCaptureCount == 1)
+        #expect(await captureController.captureCount == 0)
+    }
+
+    @MainActor
     @Test func missingWindowMetadataIsReportedAsReducedContext() {
         let model = AppModel()
         let snapshot = ContextSnapshot(
@@ -140,9 +153,14 @@ struct AppModelTests {
 
 private actor CaptureController: ContextCaptureControlling {
     private(set) var captureCount = 0
+    private(set) var clipboardCaptureCount = 0
 
     func captureNow() {
         captureCount += 1
+    }
+
+    func captureClipboardNow() {
+        clipboardCaptureCount += 1
     }
 
     func pause() {}

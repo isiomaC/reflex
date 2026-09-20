@@ -200,6 +200,12 @@ struct LensView: View {
             }
             .disabled(model.isPaused)
             .accessibilityLabel("Capture local context")
+
+            Button("Capture Clipboard Now") {
+                model.captureClipboardNow()
+            }
+            .disabled(model.isPaused || !model.isClipboardCaptureEnabled)
+            .accessibilityLabel("Capture clipboard now")
         }
         .controlSize(.large)
     }

@@ -28,6 +28,7 @@ enum DecisionFreshness: Equatable, Sendable {
 
 protocol ContextCaptureControlling: Sendable {
     func captureNow() async
+    func captureClipboardNow() async
     func pause() async
     func resume() async
     func foregroundApplicationDidChange() async
@@ -157,6 +158,12 @@ final class AppModel {
         guard !isPaused else { return }
         let controller = contextCaptureController
         Task { await controller?.captureNow() }
+    }
+
+    func captureClipboardNow() {
+        guard !isPaused, isClipboardCaptureEnabled else { return }
+        let controller = contextCaptureController
+        Task { await controller?.captureClipboardNow() }
     }
 
     func clearLocalContext() {

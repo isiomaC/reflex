@@ -74,11 +74,19 @@ struct SettingsView: View {
                     }
                     .disabled(model.isPaused)
 
+                    Button("Capture Clipboard Now") {
+                        model.captureClipboardNow()
+                    }
+                    .disabled(model.isPaused || !model.isClipboardCaptureEnabled)
+
                     Button("Clear local context") {
                         model.clearLocalContext()
                     }
                     .disabled(model.localContext == nil)
                 }
+                Text("Clipboard is read only when you choose Capture Clipboard Now; automatic app-change captures never read it.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
             }
 
             Section("Developer") {

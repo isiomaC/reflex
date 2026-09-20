@@ -41,9 +41,11 @@ The capture controls are available in the Lens, the menu bar, and Settings:
 - Enable active-window metadata only by selecting **Enable window metadata
   access**. Reflex then asks macOS for Accessibility permission; without that
   permission, it stays in reduced-context mode and does not read window titles.
-- Enable **Include clipboard in local captures** only if you want it. This
-  option is off by default. Clipboard text is bounded before it enters the
-  in-memory snapshot.
+- Enable **Include clipboard in explicit captures** only if you want it. This
+  option is off by default. Even when enabled, Reflex reads clipboard text only
+  when you choose **Capture Clipboard Now**; automatic app-change captures
+  never read it. Clipboard text is bounded before it enters the in-memory
+  snapshot.
 - Clear the currently displayed local snapshot from the app.
 
 The Lens shows the captured local snapshot and the exact sanitized payload
@@ -67,4 +69,4 @@ not perform keylogging, take screenshots, use the camera or microphone, read
 full documents, or continuously inspect clipboard contents. It requests
 Accessibility permission only after an explicit user action to enable
 active-window metadata. Clipboard capture is separately opt-in and off by
-default.
+default; it is read only through the explicit **Capture Clipboard Now** action.
