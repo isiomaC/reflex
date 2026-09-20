@@ -54,4 +54,53 @@ struct ContextSnapshotTests {
         #expect(!json.contains(String(repeating: "x", count: 1_001)))
         #expect(json == repeatedJSON)
     }
+
+    @Test func sanitizedJSONNeverSendsRawClipboardOrWindowLabels() throws {
+        let clipboardSentinel = "CLIPBOARD-SECRET-DO-NOT-SEND"
+        let windowSentinel = "WINDOW-SECRET-DO-NOT-SEND"
+        let applicationSentinel = "APPLICATION-SECRET-DO-NOT-SEND"
+        let snapshot = ContextSnapshot(
+            activeApplication: ApplicationContext(name: applicationSentinel, bundleIdentifier: "com.example.private"),
+            activeWindow: WindowContext(title: windowSentinel),
+            clipboard: ClipboardContext(kind: .text, text: clipboardSentinel, wasTruncated: false)
+        )
+
+        let json = try snapshot.sanitizedJSON()
+
+        #expect(!json.contains(clipboardSentinel))
+        #expect(!json.contains(windowSentinel))
+        #expect(!json.contains(applicationSentinel))
+        #expect(json.contains("\"textLength\" : 27"))
+        #expect(json.contains("\"contentKind\" : \"text\""))
+        #expect(json.contains("\"redacted\""))
+    }
+
+    @Test func decodingNormalizesUntrustedContextValues() throws {
+        let oversizedName = String(repeating: "n", count: ApplicationContext.maximumNameLength + 1)
+        let oversizedBundle = String(repeating: "b", count: ApplicationContext.maximumBundleIdentifierLength + 1)
+        let oversizedTitle = String(repeating: "t", count: WindowContext.maximumTitleLength + 1)
+        let oversizedClipboard = String(repeating: "c", count: ClipboardContext.maximumTextLength + 1)
+        let apps = (0...ContextSnapshot.maximumRecentApplications).map { index in
+            "{\"name\":\"App \\(index)\",\"bundleIdentifier\":\"com.example.\\(index)\"}"
+        }.joined(separator: ",")
+        let json = """
+        {
+          "id": "00000000-0000-0000-0000-000000000001",
+          "timestamp": "1970-01-01T00:00:00Z",
+          "activeApplication": {"name": "\\(oversizedName)", "bundleIdentifier": "\\(oversizedBundle)"},
+          "activeWindow": {"title": "\\(oversizedTitle)"},
+          "clipboard": {"kind": "unexpected", "text": "\\(oversizedClipboard)", "wasTruncated": false},
+          "recentApplications": [\\(apps)]
+        }
+        """
+
+        let snapshot = try JSONDecoder().decode(ContextSnapshot.self, from: Data(json.utf8))
+
+        #expect(snapshot.activeApplication.name.count == ApplicationContext.maximumNameLength)
+        #expect(snapshot.activeApplication.bundleIdentifier.count == ApplicationContext.maximumBundleIdentifierLength)
+        #expect(snapshot.activeWindow?.title.count == WindowContext.maximumTitleLength)
+        #expect(snapshot.clipboard?.kind == .nonText)
+        #expect(snapshot.clipboard?.text == nil)
+        #expect(snapshot.recentApplications.count == ContextSnapshot.maximumRecentApplications)
+    }
 }
