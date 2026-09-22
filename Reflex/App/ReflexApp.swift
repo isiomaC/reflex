@@ -3,8 +3,12 @@ import SwiftUI
 
 @main
 struct ReflexApp: App {
-    @State private var model = AppModel()
+    @State private var model: AppModel
     @Environment(\.openWindow) private var openWindow
+
+    init() {
+        _model = State(initialValue: AppModel(decisionHistoryStore: try? DecisionHistoryStore.persistent()))
+    }
 
     var body: some Scene {
         WindowGroup("Reflex", id: "reflex-main") {
@@ -95,12 +99,7 @@ private struct ReflexRootView: View {
         case .lens:
             LensView(model: model)
         case .inspector:
-            PhasePlaceholderView(
-                title: "Inspector",
-                systemImage: "slider.horizontal.3",
-                phase: "Phase 4",
-                description: "Local decision history arrives in Phase 4."
-            )
+            InspectorView(model: model)
         case .replayLab:
             PhasePlaceholderView(
                 title: "Replay Lab",

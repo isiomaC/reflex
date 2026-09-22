@@ -82,6 +82,7 @@ final class AppModel {
     private(set) var localContext: ContextSnapshot?
     private(set) var liveDecision: DecisionLensResult?
     private(set) var liveDecisionError: LiveDecisionError?
+    private var historyRevision = 0
 
     private let decisionProvider: any DecisionProvider
     private let liveDecisionProvider: (any LiveDecisionProviding)?
@@ -93,6 +94,7 @@ final class AppModel {
     private var contextCaptureController: (any ContextCaptureControlling)?
     private var applicationActivationObserver: NSObjectProtocol?
     private let accessibilityPermissionRequester: @MainActor () -> Void
+    private let decisionHistoryStore: DecisionHistoryStore?
 
     var liveModeMessage: String? {
         providerMode == .live ? "Live Jev uses the sanitized payload shown in Lens." : nil
@@ -113,6 +115,7 @@ final class AppModel {
         now: @escaping () -> Date = Date.init,
         defaults: UserDefaults = .standard,
         contextCaptureController: (any ContextCaptureControlling)? = nil,
+        decisionHistoryStore: DecisionHistoryStore? = nil,
         accessibilityPermissionRequester: @escaping @MainActor () -> Void = { AppModel.requestAccessibilityPermission() }
     ) {
         let initialContext = sampleContextProvider.currentContext()
@@ -133,6 +136,7 @@ final class AppModel {
         decisionUpdatedAt = now()
         sampleIndex = availableSamples.firstIndex(of: initialContext) ?? 0
         self.contextCaptureController = contextCaptureController
+        self.decisionHistoryStore = decisionHistoryStore
         self.accessibilityPermissionRequester = accessibilityPermissionRequester
     }
 
@@ -195,6 +199,16 @@ final class AppModel {
         date.timeIntervalSince(decisionUpdatedAt) <= 60 ? .fresh : .stale
     }
 
+    var historyRecords: [DecisionRecord] {
+        _ = historyRevision
+        return (try? decisionHistoryStore?.records()) ?? []
+    }
+
+    func clearHistory() {
+        try? decisionHistoryStore?.clear()
+        historyRevision &+= 1
+    }
+
     private func updatePausedState() {
         let controller = contextCaptureController
         Task {
@@ -222,6 +236,8 @@ final class AppModel {
                 guard let accepted = await coordinator.accept(result, for: request) else { return }
                 liveDecision = accepted
                 decisionUpdatedAt = now()
+                _ = try? decisionHistoryStore?.record(snapshot: snapshot, decision: accepted, at: decisionUpdatedAt)
+                historyRevision &+= 1
             } catch is CancellationError {
                 return
             } catch let error as LiveDecisionError {
