@@ -19,6 +19,10 @@ Open `Reflex.xcodeproj` in Xcode, or use the command line:
 ```sh
 xcodebuild -project Reflex.xcodeproj -scheme Reflex -configuration Debug build
 xcodebuild -project Reflex.xcodeproj -scheme Reflex -configuration Debug test
+
+# Or use the repository scripts.
+./build.sh
+./run.sh
 ```
 
 ## Run the app
@@ -27,6 +31,9 @@ Open `Reflex.xcodeproj` in Xcode, select the **Reflex** scheme, and press
 `Command-R`. The app provides a main window and a menu-bar control for opening
 the app, pausing or resuming local context capture, capturing context, opening
 Settings, and quitting.
+
+`./run.sh` builds into `.build/` and opens that exact app bundle once. Set
+`REFLEX_DERIVED_DATA_PATH` if you want to use a different build directory.
 
 ## Local context controls
 
