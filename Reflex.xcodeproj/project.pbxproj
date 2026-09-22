@@ -32,6 +32,8 @@
 		A40000000000000000000001 /* DecisionHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A40000000000000000000002 /* DecisionHistoryStore.swift */; };
 		A50000000000000000000001 /* ReplayEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000002 /* ReplayEngine.swift */; };
 		A50000000000000000000003 /* ReplayEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000004 /* ReplayEngineTests.swift */; };
+		A50000000000000000000005 /* ReplayRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000006 /* ReplayRunner.swift */; };
+		A50000000000000000000007 /* ReplayRunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000008 /* ReplayRunnerTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +65,8 @@
 		A40000000000000000000002 /* DecisionHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inspector/DecisionHistoryStore.swift; sourceTree = "<group>"; };
 		A50000000000000000000002 /* ReplayEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inspector/ReplayEngine.swift; sourceTree = "<group>"; };
 		A50000000000000000000004 /* ReplayEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplayEngineTests.swift; sourceTree = "<group>"; };
+		A50000000000000000000006 /* ReplayRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inspector/ReplayRunner.swift; sourceTree = "<group>"; };
+		A50000000000000000000008 /* ReplayRunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplayRunnerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,7 +86,7 @@
 		};
 		A10000000000000000000032 /* Reflex */ = {
 			isa = PBXGroup;
-			children = (A10000000000000000000001 /* ReflexApp.swift */, A10000000000000000000006 /* AppModel.swift */, A10000000000000000000035 /* Domain */, A10000000000000000000036 /* Services */, A40000000000000000000002 /* DecisionHistoryStore.swift */, A50000000000000000000002 /* ReplayEngine.swift */, A20000000000000000000002 /* ContextSnapshot.swift */, A20000000000000000000008 /* ActiveApplicationProvider.swift */, A2000000000000000000000A /* ActiveWindowProvider.swift */, A2000000000000000000000C /* ClipboardProvider.swift */, A2000000000000000000000E /* ContextEngine.swift */, A10000000000000000000020 /* LensView.swift */, A10000000000000000000023 /* PhasePlaceholderView.swift */, A10000000000000000000024 /* SettingsView.swift */, A10000000000000000000005 /* Reflex.entitlements */);
+			children = (A10000000000000000000001 /* ReflexApp.swift */, A10000000000000000000006 /* AppModel.swift */, A10000000000000000000035 /* Domain */, A10000000000000000000036 /* Services */, A40000000000000000000002 /* DecisionHistoryStore.swift */, A50000000000000000000002 /* ReplayEngine.swift */, A50000000000000000000006 /* ReplayRunner.swift */, A20000000000000000000002 /* ContextSnapshot.swift */, A20000000000000000000008 /* ActiveApplicationProvider.swift */, A2000000000000000000000A /* ActiveWindowProvider.swift */, A2000000000000000000000C /* ClipboardProvider.swift */, A2000000000000000000000E /* ContextEngine.swift */, A10000000000000000000020 /* LensView.swift */, A10000000000000000000023 /* PhasePlaceholderView.swift */, A10000000000000000000024 /* SettingsView.swift */, A10000000000000000000005 /* Reflex.entitlements */);
 			path = Reflex;
 			sourceTree = "<group>";
 		};
@@ -100,7 +104,7 @@
 		};
 		A10000000000000000000033 /* ReflexTests */ = {
 			isa = PBXGroup;
-			children = (A10000000000000000000002 /* ReflexTests.swift */, A10000000000000000000007 /* AppModelTests.swift */, A1000000000000000000000E /* CredentialStoreTests.swift */, A20000000000000000000004 /* ContextSnapshotTests.swift */, A20000000000000000000006 /* ContextProviderTests.swift */, A20000000000000000000010 /* ContextEngineTests.swift */, A50000000000000000000004 /* ReplayEngineTests.swift */);
+			children = (A10000000000000000000002 /* ReflexTests.swift */, A10000000000000000000007 /* AppModelTests.swift */, A1000000000000000000000E /* CredentialStoreTests.swift */, A20000000000000000000004 /* ContextSnapshotTests.swift */, A20000000000000000000006 /* ContextProviderTests.swift */, A20000000000000000000010 /* ContextEngineTests.swift */, A50000000000000000000004 /* ReplayEngineTests.swift */, A50000000000000000000008 /* ReplayRunnerTests.swift */);
 			path = ReflexTests;
 			sourceTree = "<group>";
 		};
@@ -164,8 +168,8 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A10000000000000000000071 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000011 /* ReflexApp.swift in Sources */, A10000000000000000000013 /* AppModel.swift in Sources */, A10000000000000000000015 /* SampleContext.swift in Sources */, A10000000000000000000016 /* MockDecision.swift in Sources */, A10000000000000000000017 /* SampleContextProvider.swift in Sources */, A10000000000000000000018 /* MockDecisionProvider.swift in Sources */, A1000000000000000000001B /* CredentialStore.swift in Sources */, A30000000000000000000001 /* LiveDecisionProvider.swift in Sources */, A40000000000000000000001 /* DecisionHistoryStore.swift in Sources */, A50000000000000000000001 /* ReplayEngine.swift in Sources */, A1000000000000000000001C /* LensView.swift in Sources */, A1000000000000000000001D /* PhasePlaceholderView.swift in Sources */, A1000000000000000000001E /* SettingsView.swift in Sources */, A20000000000000000000001 /* ContextSnapshot.swift in Sources */, A20000000000000000000007 /* ActiveApplicationProvider.swift in Sources */, A20000000000000000000009 /* ActiveWindowProvider.swift in Sources */, A2000000000000000000000B /* ClipboardProvider.swift in Sources */, A2000000000000000000000D /* ContextEngine.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
-		A10000000000000000000073 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000012 /* ReflexTests.swift in Sources */, A10000000000000000000014 /* AppModelTests.swift in Sources */, A1000000000000000000001A /* CredentialStoreTests.swift in Sources */, A20000000000000000000003 /* ContextSnapshotTests.swift in Sources */, A20000000000000000000005 /* ContextProviderTests.swift in Sources */, A2000000000000000000000F /* ContextEngineTests.swift in Sources */, A50000000000000000000003 /* ReplayEngineTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000071 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000011 /* ReflexApp.swift in Sources */, A10000000000000000000013 /* AppModel.swift in Sources */, A10000000000000000000015 /* SampleContext.swift in Sources */, A10000000000000000000016 /* MockDecision.swift in Sources */, A10000000000000000000017 /* SampleContextProvider.swift in Sources */, A10000000000000000000018 /* MockDecisionProvider.swift in Sources */, A1000000000000000000001B /* CredentialStore.swift in Sources */, A30000000000000000000001 /* LiveDecisionProvider.swift in Sources */, A40000000000000000000001 /* DecisionHistoryStore.swift in Sources */, A50000000000000000000001 /* ReplayEngine.swift in Sources */, A50000000000000000000005 /* ReplayRunner.swift in Sources */, A1000000000000000000001C /* LensView.swift in Sources */, A1000000000000000000001D /* PhasePlaceholderView.swift in Sources */, A1000000000000000000001E /* SettingsView.swift in Sources */, A20000000000000000000001 /* ContextSnapshot.swift in Sources */, A20000000000000000000007 /* ActiveApplicationProvider.swift in Sources */, A20000000000000000000009 /* ActiveWindowProvider.swift in Sources */, A2000000000000000000000B /* ClipboardProvider.swift in Sources */, A2000000000000000000000D /* ContextEngine.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000073 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000012 /* ReflexTests.swift in Sources */, A10000000000000000000014 /* AppModelTests.swift in Sources */, A1000000000000000000001A /* CredentialStoreTests.swift in Sources */, A20000000000000000000003 /* ContextSnapshotTests.swift in Sources */, A20000000000000000000005 /* ContextProviderTests.swift in Sources */, A2000000000000000000000F /* ContextEngineTests.swift in Sources */, A50000000000000000000003 /* ReplayEngineTests.swift in Sources */, A50000000000000000000007 /* ReplayRunnerTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
