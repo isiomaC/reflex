@@ -74,19 +74,24 @@ private struct ReflexRootView: View {
                 Section("Reflex") {
                     Label("Lens", systemImage: "scope")
                         .tag(AppDestination.lens)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     Label("Inspector", systemImage: "slider.horizontal.3")
                         .tag(AppDestination.inspector)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     Label("Replay Lab", systemImage: "play.rectangle")
                         .tag(AppDestination.replayLab)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
                 Section {
                     SettingsLink {
                         Label("Settings", systemImage: "gearshape")
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
             }
-            .navigationSplitViewColumnWidth(min: 190, ideal: 220)
+            .listStyle(.sidebar)
+            .navigationSplitViewColumnWidth(min: 240, ideal: 260, max: 300)
         } detail: {
             destinationView
         }
