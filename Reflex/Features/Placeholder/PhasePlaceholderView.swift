@@ -41,12 +41,61 @@ struct InspectorView: View {
         }
         .navigationTitle("Inspector")
         .toolbar {
+            Button("Replay") {
+                if let selectedRecord { model.selectRecordForReplay(selectedRecord) }
+            }
+            .disabled(selectedRecord == nil)
             Button("Clear history", role: .destructive) {
                 model.clearHistory()
                 selectedRecordID = nil
             }
             .disabled(model.historyRecords.isEmpty)
         }
+    }
+}
+
+struct ReplayLabView: View {
+    let model: AppModel
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Replay Lab").font(.largeTitle.bold())
+                if let input = model.replayInput {
+                    LabeledContent("State", value: input.isSynthetic ? "Synthetic local state" : "Stored sanitized state")
+                    Text(input.snapshot.activeApplication.bundleIdentifier)
+                        .font(.system(.body, design: .monospaced))
+                    HStack {
+                        Button("Replay once") { Task { await model.replayOnce() } }
+                        Button("Run 10 times") { Task { await model.replayRepeatedly() } }
+                            .disabled(model.isReplaying)
+                    }
+                    if let progress = model.replayProgress {
+                        ProgressView(value: Double(progress.completed), total: Double(progress.total)) {
+                            Text("Replay progress \(progress.completed) of \(progress.total)")
+                        }
+                    }
+                    if let result = model.replayResult {
+                        GroupBox("Latest replay") {
+                            LabeledContent("Activity", value: result.activity.selected.rawValue)
+                            LabeledContent("Action", value: result.suggestedAction.selected.rawValue)
+                            LabeledContent("Latency", value: "\(ReplayStatistics.milliseconds(result.latency)) ms")
+                        }
+                    }
+                    if let statistics = model.replayStatistics {
+                        GroupBox("Empirical stability") {
+                            LabeledContent("Mean selected probability", value: statistics.meanSelectedProbability.formatted(.percent))
+                            LabeledContent("Median latency", value: "\(statistics.medianLatencyMilliseconds) ms")
+                            LabeledContent("P95 latency", value: "\(statistics.p95LatencyMilliseconds) ms")
+                        }
+                    }
+                } else {
+                    ContentUnavailableView("Select an Inspector record", systemImage: "play.rectangle", description: Text("Choose Replay from a stored decision to create a synthetic local experiment."))
+                }
+            }
+            .padding(28)
+        }
+        .navigationTitle("Replay Lab")
     }
 }
 

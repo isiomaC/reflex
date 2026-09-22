@@ -124,6 +124,51 @@ struct AppModelTests {
         #expect(liveProvider.requestCount == 0)
     }
 
+    @MainActor
+    @Test func selectingAStoredRecordForReplayCreatesSyntheticInputAndNavigatesToReplayLab() throws {
+        let snapshot = ContextSnapshot(
+            id: UUID(uuidString: "00000000-0000-0000-0000-000000000002")!,
+            activeApplication: ApplicationContext(name: "Sensitive App", bundleIdentifier: "com.example.app")
+        )
+        let record = DecisionRecord(DecisionRecordDraft(
+            timestamp: .now,
+            snapshotID: snapshot.id,
+            sanitizedState: try snapshot.sanitizedJSON(),
+            selectedActivity: "debugging",
+            activityProbabilities: "{}",
+            interventionUsefulness: 0,
+            selectedAction: "doNothing",
+            actionProbabilities: "{}",
+            latencyMilliseconds: 1,
+            errorMessage: nil
+        ))
+        let model = AppModel()
+
+        model.selectRecordForReplay(record)
+
+        #expect(model.destination == .replayLab)
+        #expect(model.replayInput?.sourceRecordID == record.id)
+        #expect(model.replayInput?.isSynthetic == true)
+    }
+
+    @MainActor
+    @Test func singleReplayPublishesTheLiveProviderResult() async throws {
+        let suiteName = "ReflexTests.singleReplay.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let provider = CountingDecisionProvider()
+        let snapshot = ContextSnapshot(activeApplication: ApplicationContext(name: "Sensitive App", bundleIdentifier: "com.example.app"))
+        let record = DecisionRecord(DecisionRecordDraft(timestamp: .now, snapshotID: snapshot.id, sanitizedState: try snapshot.sanitizedJSON(), selectedActivity: "debugging", activityProbabilities: "{}", interventionUsefulness: 0, selectedAction: "doNothing", actionProbabilities: "{}", latencyMilliseconds: 1, errorMessage: nil))
+        let model = AppModel(liveDecisionProvider: provider, defaults: defaults)
+        model.providerMode = .live
+        model.selectRecordForReplay(record)
+
+        await model.replayOnce()
+
+        #expect(provider.requestCount == 1)
+        #expect(model.replayResult?.snapshotID == snapshot.id)
+    }
+
     @Test func debuggingSamplePrefersDebugging() {
         let result = MockDecisionProvider().decision(for: .debugging)
 

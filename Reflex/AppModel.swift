@@ -82,6 +82,12 @@ final class AppModel {
     private(set) var localContext: ContextSnapshot?
     private(set) var liveDecision: DecisionLensResult?
     private(set) var liveDecisionError: LiveDecisionError?
+    private(set) var replayInput: ReplayInput?
+    private(set) var replayResult: DecisionLensResult?
+    private(set) var replayResults: [DecisionLensResult] = []
+    private(set) var replayStatistics: ReplayStatistics?
+    private(set) var replayProgress: ReplayProgress?
+    private(set) var isReplaying = false
     private var historyRevision = 0
 
     private let decisionProvider: any DecisionProvider
@@ -207,6 +213,28 @@ final class AppModel {
     func clearHistory() {
         try? decisionHistoryStore?.clear()
         historyRevision &+= 1
+    }
+
+    func selectRecordForReplay(_ record: DecisionRecord) {
+        guard var input = try? ReplayInput(record: record) else { return }
+        input.isSynthetic = true
+        replayInput = input
+        destination = .replayLab
+    }
+
+    func replayOnce() async {
+        guard providerMode == .live, let replayInput, let liveDecisionProvider else { return }
+        replayResult = try? await liveDecisionProvider.decide(for: replayInput.snapshot)
+    }
+
+    func replayRepeatedly(count: Int = 10) async {
+        guard providerMode == .live, let replayInput, let liveDecisionProvider, !isReplaying else { return }
+        isReplaying = true
+        defer { isReplaying = false }
+        let runner = ReplayRunner(provider: liveDecisionProvider)
+        guard let results = try? await runner.run(input: replayInput, count: count, onProgress: { [weak self] in self?.replayProgress = $0 }) else { return }
+        replayResults = results
+        replayStatistics = ReplayStatistics(results: results)
     }
 
     private func updatePausedState() {

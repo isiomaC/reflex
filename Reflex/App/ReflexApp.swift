@@ -101,12 +101,7 @@ private struct ReflexRootView: View {
         case .inspector:
             InspectorView(model: model)
         case .replayLab:
-            PhasePlaceholderView(
-                title: "Replay Lab",
-                systemImage: "play.rectangle",
-                phase: "Phase 5",
-                description: "Replay Lab arrives in Phase 5."
-            )
+            ReplayLabView(model: model)
         }
     }
 }
