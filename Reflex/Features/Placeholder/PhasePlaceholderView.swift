@@ -17,7 +17,7 @@ struct InspectorView: View {
 
     private var selectedRecord: DecisionRecord? {
         guard let selectedRecordID else { return nil }
-        for record in model.historyRecords where record.id == selectedRecordID {
+        for record in displayedRecords where record.id == selectedRecordID {
             return record
         }
         return nil
@@ -40,6 +40,9 @@ struct InspectorView: View {
             InspectorDetail(record: selectedRecord)
         }
         .navigationTitle("Inspector")
+        .task(id: displayedRecords.map(\.id)) {
+            reconcileSelection()
+        }
         .toolbar {
             Button("Replay") {
                 if let selectedRecord { model.selectRecordForReplay(selectedRecord) }
@@ -50,6 +53,13 @@ struct InspectorView: View {
                 selectedRecordID = nil
             }
             .disabled(model.historyRecords.isEmpty)
+        }
+    }
+
+    private func reconcileSelection() {
+        guard displayedRecords.contains(where: { $0.id == selectedRecordID }) else {
+            selectedRecordID = displayedRecords.first?.id
+            return
         }
     }
 }
