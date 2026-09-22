@@ -82,6 +82,7 @@ final class AppModel {
     private(set) var localContext: ContextSnapshot?
     private(set) var liveDecision: DecisionLensResult?
     private(set) var liveDecisionError: LiveDecisionError?
+    private(set) var replayInput: ReplayInput?
     private var historyRevision = 0
 
     private let decisionProvider: any DecisionProvider
@@ -207,6 +208,13 @@ final class AppModel {
     func clearHistory() {
         try? decisionHistoryStore?.clear()
         historyRevision &+= 1
+    }
+
+    func selectRecordForReplay(_ record: DecisionRecord) {
+        guard var input = try? ReplayInput(record: record) else { return }
+        input.isSynthetic = true
+        replayInput = input
+        destination = .replayLab
     }
 
     private func updatePausedState() {
